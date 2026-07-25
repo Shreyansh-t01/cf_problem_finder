@@ -11,7 +11,11 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@types/cookie": "^0.6.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/pg": "^8.20.0",
+    "cookie": "^2.0.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "typescipt": "^1.0.0"
