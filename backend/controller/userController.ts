@@ -1,9 +1,9 @@
-import { type Response,type Request } from "express"
+import { type Response,type Request, application } from "express"
 import axios, { Axios } from "axios";
 import type { db, userCredentials } from "../typesAndInterfaces/type.js";
 import {prisma} from '../lib/prisma.js'
 import { ai } from "./ai.js";
-
+import {z}  from 'zod'
 
 
 
@@ -53,7 +53,7 @@ export const getUser = async (req:Request,res:Response)=>{
       wrongAnswers++;
     }
  }
- let acceptanceRate = (totalProblemSolved/wrongAnswers)*100;
+ let acceptanceRate = (totalProblemSolved/(wrongAnswers+totalProblemSolved))*100;
  
  userDetails.totalProblemSolved = totalProblemSolved;
  userDetails.wrongAnswers = wrongAnswers;
@@ -85,13 +85,15 @@ if(user){
     }
   })
 }
+
+
+
+
 const mpTaggedQuestions = await getTagCount(cfUsername);
 const mpRatingQuestions = await getRatingCount(cfUsername);
-let aiQuery;
-try{
- aiQuery = await ai.models.generateContent({
-  model:"gemini-2.5-flash",
-  contents:`I am providing you user rating , rating wise solved problems by the user and tag wise solved problems(one problem can have multiple tags) , acceptance rate of the user , total problem solved by the user till now . You have to analyze the given data and tell the user some actionable insights to improve their rating and become good at competitive programming and also give some tips to the user that can help him reach to his next rating tier. these are some ideas you can refer to to give tips - 
+const taggedQuestionobj =   Object.fromEntries(mpTaggedQuestions)
+const ratingQuestionObj = Object.fromEntries(mpRatingQuestions)
+const prompt = `I am providing you user rating , rating wise solved problems by the user and tag wise solved problems(one problem can have multiple tags) , acceptance rate of the user , total problem solved by the user till now . You have to analyze the given data and tell the user some actionable insights to improve their rating and become good at competitive programming and also give some tips to the user that can help him reach to his next rating tier. these are some ideas you can refer to to give tips - 
 
 1.  may be user is practicing the questions that are not good for this rating
 2.  may be user is not solving questions more than his current rating
@@ -99,15 +101,50 @@ try{
 4. may be he is making a lot of small mistaked / minor mistaked in implementation
 
 analyze users data as per your inteligence and give some advice to him to improve and make sure you give only important and crisp information.
-userDetails:
-1. rating - ${userDetails.rating}
-2. rank - ${userDetails.rank}
-3. total Problems Solved-${userDetails.totalProblemSolved}
-4. acceptance rate - ${userDetails.acceptanceRate}
-5. tag wise solved problems- ${mpTaggedQuestions}
-6. rating wise solved problem - ${mpRatingQuestions}`
+user details are given blow:-
+userDetails:${JSON.stringify({
+  rating:userDetails.rating,
+  problemSolved:userDetails.totalProblemSolved,
+  acceptanceRate:userDetails.acceptanceRate,
+  maxRating:userDetails.maxRating,
+  tagWisePracticedProblems:taggedQuestionobj,
+  ratingWisePracticedProblems:ratingQuestionObj
+
+})}
+the response should be in the format given to you
+{analysisOfUser:["first line","second line" ...],
+ mistakesUserMade:["first line","second line"...],
+ adviceUser:["first line","second line"..]
+}
+dont add on heading in data present inside any of the three fields
+`
+const analysisSchema = z.string().describe(`analysis and insights related to user profile`);
+const mistakesSchema = z.string().describe(`mistake made by user in doing competitve programming`);
+const adviceSchema = z.string().describe(`advice to user that will help him improve his competitve programming tier or performance`);
+const responseSchema = z.object({
+  analysisOfUser:z.array(analysisSchema).describe(`what are the insights you got by analyzing the given user details`),
+  mistakesUserMade:z.array(mistakesSchema).describe(`mistakes that are made by user till now in practising competitive programming through his given data`),
+  adviceUser:z.array(adviceSchema).describe(`help user reach their next rating tier or improve in competitve programming by giving him some personalized actionable tips based on his current userDetails.`)
+
+})
+const jsonFormatOfSchema = z.toJSONSchema(responseSchema,{
+  target:"draft-07"
+})
+let aiQuery;
+try{
+ aiQuery = await ai.models.generateContent({
+  model:"gemini-2.5-flash",
+  contents:prompt,
+  config:{
+    responseMimeType:`application/json`,
+    responseJsonSchema:jsonFormatOfSchema  }
+  
  })
- console.log(aiQuery.text)
+if (!aiQuery.text) {
+  throw new Error("Model did not return any text");
+}
+const answer = JSON.parse(aiQuery.text)
+userDetails.aiResponse = answer;
 }catch(err){
   console.log("gemini request failed - "+err);
 
@@ -157,7 +194,8 @@ export const getRatingCount = async (cfUsername:string)=>{
   stat = await axios.get(`https://codeforces.com/api/user.status?handle=${cfUsername}`)
  } catch(err){
   console.log("status request error-"+ err);
-  return err;
+  return new Map();
+  
  }
 
  const arr = stat?.data.result;

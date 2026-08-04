@@ -6,7 +6,12 @@ export interface userCredentials{
     rank:string,
     wrongAnswers?:number,
     acceptanceRate?:number
-    aiResponse?:string
+    aiResponse?:aiResponse
+}
+export interface aiResponse{
+  analysisOfUser:string[],
+  mistakesUserMade:string[],
+  adviceUser:string[]
 }
 
 export interface db{
