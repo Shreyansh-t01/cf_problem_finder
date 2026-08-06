@@ -1,6 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const MainPage = () => {
+  async function handleData(){
+    
+  }
+   useEffect(()=>{
+    handleData();
+   },[])
   return (
     <div className="container flex flex-col text-white mt-5 gap-4">
         <div className="serchBar flex gap-2">
