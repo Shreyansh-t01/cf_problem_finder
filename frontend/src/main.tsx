@@ -3,12 +3,20 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
+import { LoadingProvider } from './LoadingContext.tsx'
+import { UsernameProvider } from './UserContext.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-     <App />
+    <LoadingProvider>
+      <UsernameProvider>
+           <App />
+      </UsernameProvider>
+       
+    </LoadingProvider>
+     
     </BrowserRouter>
    
   </StrictMode>,

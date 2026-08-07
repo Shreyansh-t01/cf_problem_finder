@@ -1,39 +1,108 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useUsername } from '../UserContext';
+import { getUserData } from '../api';
+
+import { useLoading } from '../LoadingContext';
 
 const MainPage = () => {
+  const {cfUsername,setCfUsername} = useUsername()
+  const [userDetails, setUserDetails] = useState({
+    username:"",
+    maxRating:0,
+    rating:0,
+    totalProblemSolved:0,
+    rank:"",
+    wrongAnswers:0,
+    acceptanceRate:0,
+    aiResponse:{
+        analysisOfUser:[],
+        mistakesUserMade:[],
+        adviceUser:[]
+    },
+    arrayRating:[
+        
+    ],
+    arrayTagged:[
+
+    ]
+  })
+  const{setLoading,loading} = useLoading()
   async function handleData(){
-    
+
+     let apiResponse;
+     try{
+      apiResponse = await getUserData(cfUsername);
+     }catch(err){
+        console.log(err);
+        throw new Error("api call failed try again later")
+        return;
+     }
+     const mainobj = {
+        username:apiResponse.username,
+        rating:apiResponse.rating,
+        maxRating:apiResponse.maxRating,
+        wrongAnswers:apiResponse.wrongAnswers,
+        totalProblemSolved:apiResponse.totalProblemSolved,
+        aiResponse:apiResponse.aiResponse,
+        rank:apiResponse.rank,
+        acceptanceRate:apiResponse.acceptanceRate,
+        arrayRating:apiResponse.arrayRating,
+        arrayTagged:apiResponse.arrayTagged
+     }
+     setUserDetails(mainobj)
+     
+     
   }
+   
    useEffect(()=>{
-    handleData();
-   },[])
-  return (
+    async function dataHandling(){
+       setLoading(true);
+       await handleData();
+       setLoading(false);
+    }
+    dataHandling();
+   },[cfUsername])
+
+   const [username, setUsername] = useState("")
+
+   function submitHandler(){
+    if(username==""){
+        alert('enter username first');
+        return;
+    }
+    setCfUsername(username)
+    return;
+
+   }
+
+   if(loading==true){
+    return(
+        <div> Loading ...</div>
+    )
+   }
+   else{
+    console.log(userDetails)
+return (
     <div className="container flex flex-col text-white mt-5 gap-4">
         <div className="serchBar flex gap-2">
-            <button className='bg-black border-black p-2 text-center rounded-sm'>Analyse</button>
-            <input type="text" className='bg-gray-800 border-amber-50 p-2 rounded-sm' />
+            <button className='bg-black border-black p-2 text-center rounded-sm' onClick={submitHandler}>Analyse</button>
+            <input type="text" className='bg-gray-800 border-amber-50 p-2 rounded-sm' onChange={(e)=>{
+                setUsername(e.target.value)
+            }} />
         </div>
         <div className="mainData flex flex-col gap-2">
-            <div className="mainName flex gap-2">
-                <h2 className='text-3xl font-bold inline'>Username:-</h2>
-             <h2 className='text-2xl font-bold self-center'>shreyanshthakur2007</h2>
+            <div className="mainName text-black">
+               <p className='text-3xl font-bold font-mono'>Username:- {userDetails.username}</p>
             </div>
-            <div className="problemSolved flex font-medium">
-                <h4>Problems Solved:-</h4>
-                <h4>61</h4>
+            <div className="dataContainer text-black text-xl font-semibold ">
+                <p>Rating:- {userDetails.rating}</p>
+                <p>Max Rating :- {userDetails.maxRating}</p>
+                <p>Rank:- {userDetails.rank}</p>
+                <p>Acceptance Rate :- {userDetails.acceptanceRate}</p>
+                <p>Total Problem Solved :- {userDetails.totalProblemSolved}</p>
+                <p>Wrong Answers :- {userDetails.wrongAnswers}</p>
             </div>
-            <div className="rating flex font-medium">
-                <h4>rating:-</h4>
-                <h4>1200</h4>
-            </div>
-            <div className="maxRating flex font-medium">
-                <h4>maxrating:-</h4>
-                <h4>1400</h4>
-            </div>
-            <div className="acceptanceRate flex font-medium">
-                <h4>acceptance rating:-</h4>
-                <h4>30%</h4>
-            </div>
+           
             <div className="ratingwiseSolved flex flex-col gap-3">
                 <h3 className='font-bold text-xl'>Rating Wise Solved Problems List:-</h3>
                 <table className=' gap-2 w-full'>
@@ -45,16 +114,14 @@ const MainPage = () => {
                     </tr>
                     </thead>
                     <tbody className='bg-gray-600'>
-                        <tr className='hover:bg-gray-800'>
-                        <td >1</td>
-                        <td >1000</td>
-                        <td >30</td>
+                        {userDetails.arrayRating.map((e:[number,number],idx)=>(
+                            <tr className='hover:bg-gray-800'>
+                        <td >{idx+1}</td>
+                        <td >{e[0]}</td>
+                        <td >{e[1]}</td>
                     </tr>
-                    <tr className='hover:bg-gray-800'>
-                        <td>2</td>
-                        <td>1200</td>
-                        <td>12</td>
-                    </tr>
+                        ))}
+                    
                     </tbody>
                 </table>
             </div>
@@ -65,88 +132,61 @@ const MainPage = () => {
                         <tr className='font-medium text-xl gap-4'>
                         <th className='text-left'>No.</th>
                         <th className='text-left'>Tag</th>
-                        <th className='text-left'>Problems</th>
+                        <th className='text-left'>Problems Solved having this tag</th>
                     </tr>
                     </thead>
                     <tbody className='bg-gray-600'>
-                        <tr className='hover:bg-gray-800'>
-                        <td >1</td>
-                        <td >greedy</td>
-                        <td >30</td>
+                        {userDetails.arrayTagged.map((e:[string,number],idx)=>(
+                            <tr className='hover:bg-gray-800'>
+                        <td >{idx}</td>
+                        <td >{e[0]}</td>
+                        <td >{e[1]}</td>
                        </tr>
-                       <tr className='hover:bg-gray-800'>
-                        <td >2</td>
-                        <td >Binary Search</td>
-                        <td >30</td>
-                    </tr>
-                    <tr className='hover:bg-gray-800'>
-                        <td >3</td>
-                        <td >Brute Force</td>
-                        <td >30</td>
-                    </tr>
-                    <tr className='hover:bg-gray-800'>
-                        <td >4</td>
-                        <td >Dynamic Programming</td>
-                        <td >30</td>
-                    </tr>
+                        ))}
                     
                     </tbody>
                 </table>
             </div>
             <div className="aiResponse">
                 <div className="analysis">
-                    <h3 className='font-bold text-xl'>Analysis:-</h3>
+                    <h3 className='font-bold text-xl text-black'>Analysis:-</h3>
                    <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3">
-                     <div className="points">
-                        1. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        2. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        3. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        4. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
+                     {userDetails.aiResponse? userDetails.aiResponse.analysisOfUser.map((e,idx)=>(
+                            <div className="points" key={idx}>
+                           <h4>{e}</h4>
+                         </div>
+                          )):<></>}
                    </div>
                 </div>
                 <div className="mistakes">
-                    <h3 className='font-bold text-xl'>Mistakes:-</h3>
+                    <h3 className='font-bold text-xl text-black'>Mistakes:-</h3>
                     <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3">
-                        <div className="points">
-                        1. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        2. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        3. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
+                          {userDetails.aiResponse? userDetails.aiResponse.mistakesUserMade.map((e,idx)=>(
+                            <div className="points" key={idx}>
+                           <h4>{e}</h4>
+                         </div>
+                          )):<></>}
                     </div>
                 </div>
                 <div className="tipsToImprove">
-                    <h3 className='font-bold text-xl' >Tips To Improve:-</h3>
+                    <h3 className='font-bold text-xl text-black' >Tips To Improve:-</h3>
                     <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3">
-                        <div className="points">
-                        1. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        2. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        3. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
-                    <div className="points">
-                        4. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus consequatur, iusto molestiae veritatis aliquid ipsum.
-                    </div>
+                       {userDetails.aiResponse? userDetails.aiResponse.adviceUser.map((e,idx)=>(
+                            <div className="points" key={idx}>
+                           <h4>{e}</h4>
+                         </div>
+                          )):<></>}
                     </div>
                 </div>
             </div>
         </div>
+     
+                </div>
 
-    </div>
+    
   )
+   }
+  
 }
 
 export default MainPage

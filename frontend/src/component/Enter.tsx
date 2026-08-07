@@ -1,10 +1,11 @@
 import React from 'react'
-import { useState } from 'react';
+
 import { useLoading } from '../LoadingContext';
 import { useNavigate } from 'react-router-dom';
+import { useUsername } from '../UserContext';
 
 const Enter = () => {
-   const [cfUsername, setCfUsername] = useState("");
+   const {cfUsername,setCfUsername} = useUsername()
    const {setLoading} = useLoading();
    const navigate = useNavigate();
    async function submitHandler():Promise<void>{

@@ -93,6 +93,16 @@ const mpTaggedQuestions = await getTagCount(cfUsername);
 const mpRatingQuestions = await getRatingCount(cfUsername);
 const taggedQuestionobj =   Object.fromEntries(mpTaggedQuestions)
 const ratingQuestionObj = Object.fromEntries(mpRatingQuestions)
+let arrayRating:[number,number][] = [];
+let arrayTagged:[string,number][]= [];
+mpTaggedQuestions.forEach((value,key)=>{
+   arrayTagged = [...arrayTagged,[key,value]];
+})
+mpRatingQuestions.forEach((value,key)=>{
+  arrayRating = [...arrayRating,[key,value]]
+})
+userDetails.arrayRating = arrayRating;
+userDetails.arrayTagged = arrayTagged
 const prompt = `I am providing you user rating , rating wise solved problems by the user and tag wise solved problems(one problem can have multiple tags) , acceptance rate of the user , total problem solved by the user till now . You have to analyze the given data and tell the user some actionable insights to improve their rating and become good at competitive programming and also give some tips to the user that can help him reach to his next rating tier. these are some ideas you can refer to to give tips - 
 
 1.  may be user is practicing the questions that are not good for this rating
@@ -140,6 +150,7 @@ try{
     responseJsonSchema:jsonFormatOfSchema  }
   
  })
+ console.log("gemini api called")
 if (!aiQuery.text) {
   throw new Error("Model did not return any text");
 }
@@ -149,6 +160,8 @@ userDetails.aiResponse = answer;
   console.log("gemini request failed - "+err);
 
 }
+
+  console.log(userDetails)
  return res.status(200).json({
     message:"user entered",
     userDetails:userDetails,
@@ -171,7 +184,8 @@ export const getTagCount=async(cfUsername:string):Promise<Map<string, number>>=>
  let i:number;
  for(i=0;i<stat?.data.result.length;i++){
   let arr = stat?.data.result;
-  let j:number ;
+  if(arr[i].verdict=='OK'){
+let j:number ;
    for( j=0;j<arr[i].problem.tags.length;j++){
       if(tagMp.has(arr[i].problem.tags[j])){
         tagMp.set(arr[i].problem.tags[j],tagMp.get(arr[i].problem.tags[j])+1);
@@ -180,6 +194,8 @@ export const getTagCount=async(cfUsername:string):Promise<Map<string, number>>=>
         tagMp.set(arr[i].problem.tags[j],1);
       }
    }
+  }
+  
  }
 return tagMp;
 

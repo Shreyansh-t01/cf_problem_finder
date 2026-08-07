@@ -6,7 +6,9 @@ export interface userCredentials{
     rank:string,
     wrongAnswers?:number,
     acceptanceRate?:number
-    aiResponse?:aiResponse
+    aiResponse?:aiResponse,
+    arrayRating?:[number,number][],
+    arrayTagged?:[string,number][]
 }
 export interface aiResponse{
   analysisOfUser:string[],

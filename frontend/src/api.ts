@@ -1,9 +1,9 @@
 import axios from "axios";
-export const getUserData = async ()=>{ 
+export const getUserData = async (cfUsername:string)=>{ 
     let response;
     try{
         response = await axios.post('http://localhost:3000/user/enter',{
-       cfUsername:"shreyanshthakur2007"
+       cfUsername:cfUsername
     })
     }catch(err){
         console.log(err);
@@ -13,4 +13,3 @@ export const getUserData = async ()=>{
 
     return response?.data.userDetails;
 } 
-getUserData();
