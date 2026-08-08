@@ -10,15 +10,14 @@ function App() {
 
   return (
     <>
-    <div className="mainContainer flex justify-center items-center h-full w-full bg-gray-700 flex-col">
-     <h1 className="text-7xl  font-semibold bg-gray-300 w-screen text-center text-gray-950">CF HELPER</h1>
-   </div>
+    <div className="mainContainer flex flex-col bg-white items-center justify-center ">
+     <h1 className="text-7xl  font-semibold bg-gray-300  text-center text-gray-950 w-[80%]">CF HELPER</h1>
+   
    <Routes>
-    
      <Route path="/" element = {<Enter/>} />
      <Route path="/main" element = {<MainPage/>} />
    </Routes>
-    
+    </div>
     </>
   )
 }

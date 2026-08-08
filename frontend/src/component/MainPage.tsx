@@ -77,16 +77,16 @@ const MainPage = () => {
 
    if(loading==true){
     return(
-        <div> Loading ...</div>
+        <div className='self-center text-2xl font-semibold'> Loading ...</div>
     )
    }
    else{
-    console.log(userDetails)
+    
 return (
-    <div className="container flex flex-col text-white mt-5 gap-4">
-        <div className="serchBar flex gap-2">
+    <div className="container text-white flex flex-col gap-3 mt-5 justify-center ">
+        <div className="serchBar flex gap-2 ">
             <button className='bg-black border-black p-2 text-center rounded-sm' onClick={submitHandler}>Analyse</button>
-            <input type="text" className='bg-gray-800 border-amber-50 p-2 rounded-sm' onChange={(e)=>{
+            <input type="text" className='bg-gray-300 border-amber-50 p-2 rounded-sm' onChange={(e)=>{
                 setUsername(e.target.value)
             }} />
         </div>
