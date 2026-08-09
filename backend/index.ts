@@ -13,6 +13,9 @@ app.use(cors({
 }))
 app.use('/user',userRouter)
 app.get('/',function(req,res){
+    res.status(200).send({
+        msg:"backend is listening"
+    })
     console.log("application is listenin");
 })
 
