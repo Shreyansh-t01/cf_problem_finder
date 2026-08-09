@@ -86,7 +86,7 @@ return (
     <div className="container text-white flex flex-col gap-3 mt-5 justify-center ">
         <div className="serchBar flex gap-2 ">
             <button className='bg-black border-black p-2 text-center rounded-sm' onClick={submitHandler}>Analyse</button>
-            <input type="text" className='bg-gray-300 border-amber-50 p-2 rounded-sm' onChange={(e)=>{
+            <input type="text" className='bg-gray-300 border-amber-50 p-2 rounded-sm text-black' onChange={(e)=>{
                 setUsername(e.target.value)
             }} />
         </div>
@@ -106,19 +106,19 @@ return (
             <div className="ratingwiseSolved flex flex-col gap-3">
                 <h3 className='font-bold text-xl'>Rating Wise Solved Problems List:-</h3>
                 <table className=' gap-2 w-full'>
-                    <thead className='bg-gray-900 text-white px-3 py-4'>
+                    <thead className='bg-gray-800 text-white px-3 py-4'>
                         <tr className='font-medium text-xl gap-4'>
-                        <th className='text-left'>No.</th>
-                        <th className='text-left'>rating</th>
-                        <th className='text-left'>problems</th>
+                        <th className='text-left px-5 py-3'>No.</th>
+                        <th className='text-left px-5 py-3'>rating</th>
+                        <th className='text-left px-5 py-3'>problems</th>
                     </tr>
                     </thead>
-                    <tbody className='bg-gray-600'>
+                    <tbody className='bg-gray-700'>
                         {userDetails.arrayRating.map((e:[number,number],idx)=>(
-                            <tr className='hover:bg-gray-800'>
-                        <td >{idx+1}</td>
-                        <td >{e[0]}</td>
-                        <td >{e[1]}</td>
+                            <tr className='hover:bg-gray-800 border-b-2 border-gray-500'>
+                        <td className='px-5 py-2'>{idx+1}</td>
+                        <td className='px-5 py-2' >{e[0]}</td>
+                        <td className='px-5 py-2'>{e[1]}</td>
                     </tr>
                         ))}
                     
@@ -127,20 +127,20 @@ return (
             </div>
             <div className="tagWiseSolved flex flex-col gap-3">
                 <h3 className='font-bold text-xl'>Tag Wise Problem Solved :-</h3>
-                <table>
-                      <thead className='bg-gray-900 text-white px-3 py-4'>
-                        <tr className='font-medium text-xl gap-4'>
-                        <th className='text-left'>No.</th>
-                        <th className='text-left'>Tag</th>
-                        <th className='text-left'>Problems Solved having this tag</th>
+                <table className=''>
+                      <thead className='bg-gray-800 text-white'>
+                        <tr className='font-medium text-xl  '>
+                        <th className='text-left px-5 py-3'>No.</th>
+                        <th className='text-left  px-5 py-3'>Tag</th>
+                        <th className='text-left  px-5 py-3'>Problems Solved having this tag</th>
                     </tr>
                     </thead>
-                    <tbody className='bg-gray-600'>
+                    <tbody className='bg-gray-700'>
                         {userDetails.arrayTagged.map((e:[string,number],idx)=>(
-                            <tr className='hover:bg-gray-800'>
-                        <td >{idx}</td>
-                        <td >{e[0]}</td>
-                        <td >{e[1]}</td>
+                            <tr className='hover:bg-gray-800 border-b-2 border-gray-500'>
+                        <td className='px-5 py-2 ' >{idx+1}</td>
+                        <td className='px-5 py-2' >{e[0]}</td>
+                        <td className='px-5 py-2'>{e[1]}</td>
                        </tr>
                         ))}
                     
@@ -150,9 +150,10 @@ return (
             <div className="aiResponse">
                 <div className="analysis">
                     <h3 className='font-bold text-xl text-black'>Analysis:-</h3>
-                   <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3">
+                   <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3 flex flex-col gap-3">
                      {userDetails.aiResponse? userDetails.aiResponse.analysisOfUser.map((e,idx)=>(
-                            <div className="points" key={idx}>
+                            <div className="points bg-gray-700 rounded-sm px-2 py-1 flex gap-1" key={idx}>
+                            <h4>{idx+1}</h4>
                            <h4>{e}</h4>
                          </div>
                           )):<></>}
@@ -160,9 +161,10 @@ return (
                 </div>
                 <div className="mistakes">
                     <h3 className='font-bold text-xl text-black'>Mistakes:-</h3>
-                    <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3">
+                    <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3 flex flex-col   gap-3">
                           {userDetails.aiResponse? userDetails.aiResponse.mistakesUserMade.map((e,idx)=>(
-                            <div className="points" key={idx}>
+                            <div className="points bg-gray-700 rounded-sm px-2 py-1 flex gap-1" key={idx}>
+                                <h4>{idx+1}</h4>
                            <h4>{e}</h4>
                          </div>
                           )):<></>}
@@ -170,9 +172,10 @@ return (
                 </div>
                 <div className="tipsToImprove">
                     <h3 className='font-bold text-xl text-black' >Tips To Improve:-</h3>
-                    <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3">
+                    <div className="pointsContainer bg-gray-800 rounded-md px-5 py-3  flex flex-col gap-3">
                        {userDetails.aiResponse? userDetails.aiResponse.adviceUser.map((e,idx)=>(
-                            <div className="points" key={idx}>
+                            <div className="points bg-gray-700 rounded-sm px-2 py-1 flex gap-1" key={idx}>
+                                <h4>{idx+1}</h4>
                            <h4>{e}</h4>
                          </div>
                           )):<></>}

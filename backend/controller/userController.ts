@@ -126,7 +126,7 @@ the response should be in the format given to you
  mistakesUserMade:["first line","second line"...],
  adviceUser:["first line","second line"..]
 }
-dont add on heading in data present inside any of the three fields
+dont add on heading in data present inside any of the three fields . Make sure you don't give general advices or general stuff only give relevant short important stuff to the user as response
 `
 const analysisSchema = z.string().describe(`analysis and insights related to user profile`);
 const mistakesSchema = z.string().describe(`mistake made by user in doing competitve programming`);
@@ -218,6 +218,9 @@ export const getRatingCount = async (cfUsername:string)=>{
  let i:number;
  for(i=0;i<arr.length;i++){
   if(arr[i].verdict=='OK'){
+    if(arr[i].problem.rating==='undefined'){
+      continue;
+    }
      if(ratingMp.has(arr[i].problem.rating)){
     ratingMp.set(arr[i].problem.rating,ratingMp.get(arr[i].problem.rating)+1);
    }

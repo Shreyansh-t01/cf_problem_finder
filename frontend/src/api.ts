@@ -2,7 +2,8 @@ import axios from "axios";
 export const getUserData = async (cfUsername:string)=>{ 
     let response;
     try{
-        response = await axios.post('http://localhost:3000/user/enter',{
+        console.log(import.meta.env.VITE_API_URL);
+        response = await axios.post(`${import.meta.env.VITE_API_URL}`,{
        cfUsername:cfUsername
     })
     }catch(err){
