@@ -1,7 +1,7 @@
 
 import Enter from "./component/Enter"
 import MainPage from "./component/MainPage"
-import { Route,Router, Routes } from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
 
 
 
