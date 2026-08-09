@@ -1,6 +1,7 @@
 import express from 'express'
 import { userRouter } from './routes/userRoutes.js';
 import cors from 'cors'
+import { CORS_ORIGIN } from './env.js';
 
 
 const app = express();
@@ -8,11 +9,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use(cors({
-    origin:'*'
+    origin:`${CORS_ORIGIN}`
 }))
 app.use('/user',userRouter)
 
 
-app.listen(3000,function(){
+app.listen(8080,function(){
     console.log("server running on 3000");
 })
