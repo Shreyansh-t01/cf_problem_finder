@@ -12,6 +12,9 @@ app.use(cors({
     origin:`${CORS_ORIGIN}`
 }))
 app.use('/user',userRouter)
+app.get('/',function(req,res){
+    console.log("application is listenin");
+})
 
 
 app.listen(8080,function(){
