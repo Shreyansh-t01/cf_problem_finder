@@ -3,7 +3,7 @@ export const getUserData = async (cfUsername:string)=>{
     let response;
     try{
         console.log(import.meta.env.VITE_API_URL);
-        response = await axios.post(`${import.meta.env.VITE_API_URL}user/enter`,{
+        response = await axios.post(`${import.meta.env.VITE_API_URL}/user/enter`,{
        cfUsername:cfUsername
     })
     }catch(err){

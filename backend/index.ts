@@ -8,9 +8,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-app.use(cors({
-    origin:`${CORS_ORIGIN}`
-}))
+app.use(cors())
 app.use('/user',userRouter)
 app.get('/',function(req,res){
     res.status(200).send({
@@ -20,6 +18,6 @@ app.get('/',function(req,res){
 })
 
 
-app.listen(8080,function(){
+app.listen(3000,function(){
     console.log("server running on 3000");
 })

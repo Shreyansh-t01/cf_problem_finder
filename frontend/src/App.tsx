@@ -10,7 +10,7 @@ function App() {
 
   return (
     <>
-    <div className="mainContainer flex flex-col bg-white items-center justify-center ">
+    <div className="mainContainer flex flex-col bg-zinc-300 items-center justify-center ">
      <h1 className="text-7xl  font-semibold bg-gray-300  text-center text-gray-950 w-[80%]">CF HELPER</h1>
    
    <Routes>
