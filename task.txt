@@ -1,0 +1,10 @@
+ REMAINING THINGS -- >
+1. BACKEND:- 
+       1. a end point which returns problems based on the user's profile for the next two weeks (around 30 best fit problems)
+       2. Resources suggestions very personalized to a perticular user
+       3. fixing all small small bugs in data
+       4. wrong problem solved count fix
+
+2. FRONTEND:-
+       1. a route where user can see all the personalized problem set and download it as pdf which contains the links of the questions 
+       2. making main application UI good
