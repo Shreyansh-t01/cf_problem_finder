@@ -16,6 +16,7 @@ function App() {
    <Routes>
      <Route path="/" element = {<Enter/>} />
      <Route path="/main" element = {<MainPage/>} />
+     
    </Routes>
     </div>
     </>

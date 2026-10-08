@@ -101,6 +101,8 @@ function problemFilter(
      excludedId.add(identity)
      const obj = {
       problemScore:score,
+      problemRating:problem.rating,
+      problemName:problem.name,
       tags:problem.tags,
       contestId:problem.contestId,
       index:problem.index
@@ -150,22 +152,23 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
   
   // this is holding the questions solved successfully by the user 
   const accSubmissions = cfSubmissions.filter((e)=> e.verdict=='OK' && e.problem.rating!=="")
-  console.log("accepted submissions received")
+  
   
   // getting user information
   let userInfo;
   try{
     userInfo = await axios.get(`https://codeforces.com/api/user.info?handles=${userId}`)
-    console.log("got user information")
+  
   }catch(err){
     console.log("Error Message :- ",err);
   }
-
+  
   // getting user rating 
-  let Ru = userInfo?.data.result.rating
+  let Ru = userInfo?.data.result[0].rating
 
   // now calculating expectation values using gaussian central theorem
   // e = exp(1/2*(Ru - Rt)/sigma)  for each tag we will have to calculate this thing  
+  
  let valueMap = [];
   let zeroPracticed = [];
   for(const obj of tagRating){
@@ -174,9 +177,11 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
      const delta = Ru-Rt;  // delta can be negative also 
      let sigma = 100;
      if(Ru>=Rt) sigma = 450;
-     const val = delta/sigma;
-     const expectation = Math.exp(-(1/2)*(val*val)); // expectation score 
+     const val = (delta/sigma);
      
+     const expectation = Math.exp(-(1/2)*(val*val));
+      // expectation score 
+       
      const tag = obj.tag;  //problem tag 
     let proficiencyScore = 0; 
      for(const ac of accSubmissions){
@@ -185,15 +190,16 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
           // score calculation 
           // finalScore = finalscore+ ()
           const currentTime = Math.round(Date.now()/1000);
-          const secondsAgo  = currentTime - tg.creationTimeSeconds;
-          const daysAgo = secondsAgo/86400 ;  
+          const secondsAgo  = currentTime - ac.creationTimeSeconds; 
+          const daysAgo = secondsAgo/86400 ; 
           const DECAY_CONSTANT = 0.0077; 
           const recencyWeight = Math.exp(-DECAY_CONSTANT*daysAgo);
-
-
-          const ratingDelta = ac.problem.rating - Ru;  // tag ka rating difference from the user rating 
+        const ratingDelta = ac.problem.rating - Ru; 
+          // tag ka rating difference from the user rating 
           const diffWeight = Math.max(0.1,1+(ratingDelta/400));  // user rating se kitna close rating ka tag hai uska score 
-          const problemScore = recencyWeight*diffWeight ;   
+          console.log(diffWeight)
+          const problemScore = recencyWeight*diffWeight ;  
+          console.log(problemScore) 
 
           proficiencyScore+=problemScore;
         }
@@ -208,9 +214,7 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
     
     const globalImportance = globalScore(Ru,tag) // get it from the global tag mapping point table  
     // calculating wt score for each tag and storing in proficiency map 
-     
      const tagValue = (expectation*(globalImportance))/(0.1 + proficiencyScore); // don't you think zero practiced tag are examined here only 
-
     valueMap.push({
       tag:tag,
       tagValue:tagValue
@@ -223,24 +227,32 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
    const lastRange = [Ru-100,Ru];
   // now we need to sort this value map and get most important tags for the user
  
+
   valueMap.sort((a,b)=> b.tagValue-a.tagValue)
    // this allocation array now holds top 4 tags and their slots out of 18
   const topTags = valueMap.slice(0,4);
-  const totalSlots = 18; // this is slot one for higher rating problems to strengthen user rating 
-  const totalWeight = topTags.reduce((sum,item)=> sum+item.tagValue,0); // adding up the tags value 
+  console.log(topTags)
+  const totalSlots = 18;  // this is slot one for higher rating problems to strengthen user rating 
+   // adding up the tags value 
+   let totalWeight = 0;
+   for(const tg of topTags){
+    totalWeight+=tg.tagValue
+   }
+
   let allocated = 0;
-  const weakAllocations  = topTags.map((e,i)=>{     
+    const weakAllocations  = topTags.map((e,i)=>{     
      if(i===topTags.length-1){
       return { tag:e.tag , slots: totalSlots-allocated };
      }
-
+     console.log("tag value:- ",e.tagValue)
+     console.log("total weight",totalWeight)
      const slots = Math.round(totalSlots*(e.tagValue/totalWeight));
-
+     console.log(slots)
      allocated+=slots;
-
      return {tag:e.tag,slots:slots}
-
   })  
+
+
    const problemSet1 = weakAllocations.map((e)=>{
     console.log(e);
     const targetTag = e.tag;
@@ -307,11 +319,8 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
     problemSet3:problemSet3
    })
 }
+ 
 
-
-
-   
-  
 
   
 

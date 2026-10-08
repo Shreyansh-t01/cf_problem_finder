@@ -14,3 +14,15 @@ export const getUserData = async (cfUsername:string)=>{
 
     return response?.data.userDetails;
 } 
+
+export const getProblemSet = async(userId:string)=>{
+   let response;
+   try{
+     response = await axios.get(`${import.meta.env.VITE_API_URL}/problemset/:${userId}`)
+   }catch(err){
+    console.log("error occured while finding problem set", err)
+   }
+
+   return response?.data;
+ 
+}

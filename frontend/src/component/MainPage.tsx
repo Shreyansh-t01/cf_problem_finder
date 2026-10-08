@@ -4,7 +4,7 @@ import { getUserData } from '../api';
 import {RatingChart} from '../component/RatingChart'
 
 import { useLoading } from '../LoadingContext';
-import { TagChart } from './tagChart';
+import { TagChart } from './TagChart';
 interface userDetailsTypes {
     username:string,
     maxRating:number,
