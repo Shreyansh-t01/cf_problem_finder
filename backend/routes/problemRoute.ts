@@ -5,7 +5,7 @@ export const problemSetConstructor = express.Router();
 
 
 
-problemSetConstructor.get('/:userId/problemSet',problemSetHandler);
+problemSetConstructor.get('/:userId',problemSetHandler);
 
 
 

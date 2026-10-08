@@ -2,6 +2,7 @@ import {type Request,type Response} from 'express';
 import axios from 'axios'
 import { TAG_PEAK_RATINGS as tagRating } from '../dataMaps/tagsRating.js';
 import { problemSet } from '../dataMaps/problemSet.js';
+import { globalScore } from './globalScore.js';
 
 interface submissionType{
 
@@ -117,11 +118,12 @@ function problemFilter(
 export const problemSetHandler = async (req:Request ,res:Response)=>{
 
   const userId = req.params.userId;
+  console.log(userId);
   // user submissions 
   let stat;
   try{
     stat = await axios.get(`https://codeforces.com/api/user.status?handle=${userId}`)
-
+    console.log("user stats received")
   }catch(err){
     console.log('codeforces api is not responding')
   }
@@ -141,18 +143,20 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
     if(ele.verdict==='OK' || !ele.problem.rating){
       excludedId.add(`${ele.problem.contestId}-${ele.problem.index}`)
     }
-
-    cfSubmissions.push(obj);
+  
+      cfSubmissions.push(obj);
   } 
-
+  console.log("cf submission and excluded id set created")
+  
   // this is holding the questions solved successfully by the user 
   const accSubmissions = cfSubmissions.filter((e)=> e.verdict=='OK' && e.problem.rating!=="")
-  
+  console.log("accepted submissions received")
   
   // getting user information
   let userInfo;
   try{
     userInfo = await axios.get(`https://codeforces.com/api/user.info?handles=${userId}`)
+    console.log("got user information")
   }catch(err){
     console.log("Error Message :- ",err);
   }
@@ -167,18 +171,18 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
   for(const obj of tagRating){
     // calculating expectation value 
      const Rt = obj.rating;
-     const delta = Ru-Rt;
-     let sigma = 200;
+     const delta = Ru-Rt;  // delta can be negative also 
+     let sigma = 100;
      if(Ru>=Rt) sigma = 450;
      const val = delta/sigma;
-      const expectation = Math.exp((1/2)*(val*val)); // expectation score 
+     const expectation = Math.exp(-(1/2)*(val*val)); // expectation score 
      
      const tag = obj.tag;  //problem tag 
     let proficiencyScore = 0; 
      for(const ac of accSubmissions){
        for(const tg of ac.problem.tags){
         if(tg===tag){
-          // score calculation
+          // score calculation 
           // finalScore = finalscore+ ()
           const currentTime = Math.round(Date.now()/1000);
           const secondsAgo  = currentTime - tg.creationTimeSeconds;
@@ -187,7 +191,7 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
           const recencyWeight = Math.exp(-DECAY_CONSTANT*daysAgo);
 
 
-          const ratingDelta = tg.problem.rating - Ru;  // tag ka rating difference from the user rating 
+          const ratingDelta = ac.problem.rating - Ru;  // tag ka rating difference from the user rating 
           const diffWeight = Math.max(0.1,1+(ratingDelta/400));  // user rating se kitna close rating ka tag hai uska score 
           const problemScore = recencyWeight*diffWeight ;   
 
@@ -202,7 +206,7 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
      })
      }
     
-    const globalImportance = 0 // get it from the global tag mapping point table  
+    const globalImportance = globalScore(Ru,tag) // get it from the global tag mapping point table  
     // calculating wt score for each tag and storing in proficiency map 
      
      const tagValue = (expectation*(globalImportance))/(0.1 + proficiencyScore); // don't you think zero practiced tag are examined here only 
@@ -225,9 +229,7 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
   const totalSlots = 18; // this is slot one for higher rating problems to strengthen user rating 
   const totalWeight = topTags.reduce((sum,item)=> sum+item.tagValue,0); // adding up the tags value 
   let allocated = 0;
-
-  const weakAllocations  = topTags.map((e,i)=>{
-     
+  const weakAllocations  = topTags.map((e,i)=>{     
      if(i===topTags.length-1){
       return { tag:e.tag , slots: totalSlots-allocated };
      }
@@ -240,10 +242,11 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
 
   })  
    const problemSet1 = weakAllocations.map((e)=>{
+    console.log(e);
     const targetTag = e.tag;
     const minRating  = topRange[0];
     const maxRating = topRange[1];
-    const slotNeeded = e.slots
+    const slotNeeded = e.slots;
    const userWeakTags = new Set(weakAllocations.map(({tag,slots})=> tag))
    const arr = problemFilter(targetTag,minRating,maxRating,slotNeeded,userWeakTags,excludedId,Ru) 
    return arr;
@@ -277,8 +280,6 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
 
    return arr;
   })
-
-
   // slot third for the tags which user never practiced previously 
   zeroPracticed.sort((a,b)=> b.expectationScore-a.expectationScore);
   // identify top 1 not practiced tag 
@@ -297,7 +298,18 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
 
      return arr;
    })
+
+
+   res.send({
+    message:"problem set generated",
+    problemSet1:problemSet1,
+    problemSet2:problemSet2,
+    problemSet3:problemSet3
+   })
 }
+
+
+
    
   
 
