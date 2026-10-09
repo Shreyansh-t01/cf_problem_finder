@@ -2,6 +2,7 @@
 import Enter from "./component/Enter"
 import MainPage from "./component/MainPage"
 import { Route, Routes } from "react-router-dom"
+import ProblemSet from "./component/ProblemSet"
 
 
 
@@ -16,7 +17,7 @@ function App() {
    <Routes>
      <Route path="/" element = {<Enter/>} />
      <Route path="/main" element = {<MainPage/>} />
-     
+     <Route path="/problem" element={<ProblemSet/>} />
    </Routes>
     </div>
     </>

@@ -21,7 +21,9 @@ const {loading,setLoading}  = useLoading();
 
   async function getData(){
     const userId = userContext.cfUsername
+    console.log("userId - ",userId)
     const apiData = await getProblemSet(userId);
+    console.log(apiData)
     const combinedList1 = apiData.problemSet1
     const combinedList2 = apiData.problemSet2 
     const combinedList3 = apiData.problemSet3 
@@ -65,22 +67,49 @@ const {loading,setLoading}  = useLoading();
     return (
         <div>Loading ...</div>
     )
-  }
+  }  
+  // url https://codeforces.com/problemset/problem/{contextId}/{index}
   return (
-    <div>
-      <h2>Personalized Problem Set</h2>
-      <div className="pdfContainer">
-        <button>Get PDF</button>
-      </div>
-      <div className="questionsContainer">
-            <div className="set1Container">
-                <h3>Train Your Brain..</h3>
+    <div className='flex flex-col items-center mt-5'>
+      <h2 className='text-4xl font-bold text-black'>Personalized Problem Set</h2>
+      {/* <div className="pdfContainer">
+        <button className='bg-black text-white rounded-md px-3 py-2'>Get PDF</button>
+      </div> */}
+      <div className="questionsContainer flex flex-col gap-8 border-2 border-black w-screen h-full justify-center items-center">
+            <div className="setContainer w-3/4">
+                <h3 className='text-4xl font-bold'>Train Your Brain..</h3>
                  {problemSet1?.map((e:problem,idx)=>{
                      return (
-                        <div>
+                        <div className='flex text-black bg-white px-4 py-2 gap-10'>
                          <div className="counter">{idx+1}</div>
                          <div className="problemLink">
-                         <a href={}></a>
+                         <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
+                         </div>
+                        </div>
+                     )
+                 })}
+            </div>
+            <div className="setContainer w-3/4">
+                <h3 className='text-4xl font-bold'>Muscle Up...</h3>
+                 {problemSet2?.map((e:problem,idx)=>{
+                     return (
+                        <div className='flex text-black bg-white px-4 py-2'>
+                         <div className="counter">{idx+1}</div>
+                         <div className="problemLink">
+                         <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
+                         </div>
+                        </div>
+                     )
+                 })}
+            </div>
+            <div className="setContainer w-3/4">
+                <h3 className='text-4xl font-bold'>Explore...</h3>
+                 {problemSet3?.map((e:problem,idx)=>{
+                     return (
+                        <div className='flex text-black bg-white px-4 py-2'>
+                         <div className="counter">{idx+1}</div>
+                         <div className="problemLink">
+                         <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
                          </div>
                         </div>
                      )
