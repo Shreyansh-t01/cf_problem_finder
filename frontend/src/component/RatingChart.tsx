@@ -23,12 +23,14 @@ export const RatingChart = (props:ratingType)=>{
     Legend
     });
   const ratings:[number,number][] = props.rating
+  ratings.sort()
   const ratingsInOrder:number[] = []
   const questionsInOrder:number[] = []
   ratings.map((e:[number,number])=>{
 ratingsInOrder.push(e[0]);
 questionsInOrder.push(e[1]);
   })
+  
   const options = {
 
   }
