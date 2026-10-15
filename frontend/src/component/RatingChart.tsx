@@ -1,51 +1,83 @@
-import {Chart} from 'chart.js'
-import {Bar} from 'react-chartjs-2'
+import { useMemo } from 'react';
 import {
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    Title,
-    Tooltip,
-    Legend
-} from 'chart.js'
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend,
+  type ChartOptions,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
-interface ratingType extends React.HTMLAttributes<HTMLDivElement> {
-    rating:[number,number][] 
+ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
+
+interface RatingChartProps {
+  rating: [number, number][]; // [ratingBucket, numberOfQuestions]
 }
 
-export const RatingChart = (props:ratingType)=>{
-    Chart.register({
-         BarElement,
-    CategoryScale,
-    LinearScale,
-    Title,
-    Tooltip,
-    Legend
-    });
-  const ratings:[number,number][] = props.rating
-  ratings.sort()
-  const ratingsInOrder:number[] = []
-  const questionsInOrder:number[] = []
-  ratings.map((e:[number,number])=>{
-ratingsInOrder.push(e[0]);
-questionsInOrder.push(e[1]);
-  })
-  
-  const options = {
+export const RatingChart = ({ rating }: RatingChartProps) => {
+  const data = useMemo(() => {
+    const sorted = [...rating].sort((a, b) => a[0] - b[0]); // numeric sort, no mutation
 
-  }
-    const barChartData = {
-        labels:[...ratingsInOrder],
-        datasets:[
-            {
-                labels:[0,50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300],
-                data:[...questionsInOrder],
-                backgroundColor:"rgba(255, 127, 127, 0.5)"
-            }
-        ]
-    }
+    return {
+      labels: sorted.map((r) => r[0]),
+      datasets: [
+        {
+          label: 'Questions',
+          data: sorted.map((r) => r[1]),
+          backgroundColor: 'rgba(204, 72, 72, 0.9)',
+          hoverBackgroundColor: 'rgba(245, 84, 84, 1)',
+          borderRadius: 6,
+          borderSkipped: false as const,
+          maxBarThickness: 48,
+          barPercentage: 0.8,
+          categoryPercentage: 0.9,
+        },
+      ],
+    };
+  }, [rating]);
 
-    return (
-        <Bar options={options} data={barChartData}/>
-    )
-}
+  const options: ChartOptions<'bar'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    animation: { duration: 600, easing: 'easeOutQuart' },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#111827',
+        padding: 12,
+        cornerRadius: 8,
+        displayColors: false,
+        callbacks: {
+          title: (items) => `Rating ${items[0].label}`,
+          label: (ctx) => `${ctx.parsed.y} questions`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        border: { display: false },
+        title: { display: true, text: 'Rating', color: '#6B7280' },
+        ticks: { color: '#6B7280', padding: 8 },
+      },
+      y: {
+        beginAtZero: true,
+        grace: '10%', // headroom above the tallest bar
+        border: { display: false },
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        title: { display: true, text: 'Number of questions', color: '#6B7280' },
+        ticks: { color: '#6B7280', padding: 8, maxTicksLimit: 6 },
+      },
+    },
+  };
+
+  return (
+    <div style={{ height: 350 }}>
+      <Bar options={options} data={data} />
+    </div>
+  );
+};
