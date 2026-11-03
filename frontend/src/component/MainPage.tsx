@@ -142,7 +142,7 @@ return (
                 </div>
             </div>
            
-            <div className="ratingwiseSolved flex gap-3">
+            <div className="ratingwiseSolved flex gap-3 w-full self-center">
                 {/* <h3 className='font-bold text-xl text-black'>Rating Wise Solved Problems List:-</h3>
                 <table className=' gap-2 w-full text-black'>
                     <thead className='bg-zinc-200 text-black px-3 py-4'>
@@ -164,9 +164,9 @@ return (
                     </tbody>
                 </table> */}
                 <RatingChart  rating = {sampleUserDetails.arrayRating} />
-                <TagChart tagged={sampleUserDetails.arrayTagged}/>
+                
             </div>
-            <div className="tagWiseSolved flex flex-col gap-3">
+            <div className="tagWiseSolved flex flex-col gap-3 items-center w-3/4 self-center">
                 {/* <h3 className='font-bold text-xl text-black'>Tag Wise Problem Solved :-</h3>
                 <table className=''>
                       <thead className='bg-zinc-200 text-black'>
@@ -187,6 +187,12 @@ return (
                     
                     </tbody>
                 </table> */}
+                <div className='relative  h-100 w-1/2'>
+                     <TagChart tagged={sampleUserDetails.arrayTagged}/>
+                </div>
+                  
+                
+                
                 
             </div>
             <div className="aiResponse flex flex-col gap-5">

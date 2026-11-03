@@ -29,10 +29,10 @@ export const RatingChart = ({ rating }: RatingChartProps) => {
           data: sorted.map((r) => r[1]),
           backgroundColor: 'rgba(204, 72, 72, 0.9)',
           hoverBackgroundColor: 'rgba(245, 84, 84, 1)',
-          borderRadius: 6,
+          // borderRadius: 6,
           borderSkipped: false as const,
-          maxBarThickness: 48,
-          barPercentage: 0.8,
+          maxBarThickness: 100,
+          // barPercentage: 0.8,
           categoryPercentage: 0.9,
         },
       ],
@@ -45,10 +45,12 @@ export const RatingChart = ({ rating }: RatingChartProps) => {
     interaction: { mode: 'index', intersect: false },
     animation: { duration: 600, easing: 'easeOutQuart' },
     plugins: {
-      legend: { display: false },
+      legend: { display: false,
+       },
       tooltip: {
         backgroundColor: '#111827',
         padding: 12,
+        
         cornerRadius: 8,
         displayColors: false,
         callbacks: {
@@ -76,7 +78,7 @@ export const RatingChart = ({ rating }: RatingChartProps) => {
   };
 
   return (
-    <div style={{ height: 350 }}>
+    <div className='w-full h-90'>
       <Bar options={options} data={data} />
     </div>
   );
