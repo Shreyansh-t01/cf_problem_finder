@@ -17,17 +17,35 @@ interface RatingChartProps {
   rating: [number, number][]; // [ratingBucket, numberOfQuestions]
 }
 
+
 export const RatingChart = ({ rating }: RatingChartProps) => {
   const data = useMemo(() => {
     const sorted = [...rating].sort((a, b) => a[0] - b[0]); // numeric sort, no mutation
+     const colors:string[] = [];
+let i;
+for(i=0;i<sorted.length;i++){
+    let st:string  = "rgb(128, 128, 128)";
+     const rating = sorted[i][0];
 
+     if(rating>1199 && rating<=1399) st =`rgb(0, 215, 0)`;
+     else if(rating>=1400 && rating<1600) st = `rgb(3, 168, 158)`;
+     else if(rating>=1600 && rating<1900) st = `rgb(0, 0, 255)`;
+     else if(rating>=1900 && rating<2100) st = `rgb(170, 0, 170)`;
+     else if(rating>=2100 && rating<2400) st = `rgb(255, 140, 0)`;
+     else if(rating>=2400 && rating<3000) st = `rgb(255, 0, 0)`;
+     else if(rating>=3000) st = `rgb(0, 0, 0)`;
+    
+     colors.push(st);       
+}
     return {
       labels: sorted.map((r) => r[0]),
       datasets: [
         {
           label: 'Questions',
           data: sorted.map((r) => r[1]),
-          backgroundColor: 'rgba(204, 72, 72, 0.9)',
+          backgroundColor:[
+            ...colors
+          ],
           hoverBackgroundColor: 'rgba(245, 84, 84, 1)',
           // borderRadius: 6,
           borderSkipped: false as const,
@@ -78,7 +96,7 @@ export const RatingChart = ({ rating }: RatingChartProps) => {
   };
 
   return (
-    <div className='w-full h-90'>
+    <div className='w-1/2 '>
       <Bar options={options} data={data} />
     </div>
   );
