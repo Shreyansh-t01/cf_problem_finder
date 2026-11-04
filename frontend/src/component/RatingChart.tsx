@@ -96,7 +96,7 @@ for(i=0;i<sorted.length;i++){
   };
 
   return (
-    <div className='w-1/2 '>
+    <div className='lg:w-1/2 w-full'>
       <Bar options={options} data={data} />
     </div>
   );

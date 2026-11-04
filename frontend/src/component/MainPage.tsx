@@ -104,45 +104,45 @@ const MainPage = () => {
    else{
     
 return (
-    <div className="container text-white flex flex-col gap-3 mt-5 justify-center ">
+    <div className="container text-white flex flex-col gap-3 mt-5 justify-center lg:w-[80%] border border-solid border-white p-3 mb-10 bg-gray-100 w-full font-[verdana]"> 
         <div className="serchBar flex gap-2 ">
             <button className='bg-black border-black p-2 text-center rounded-sm' onClick={submitHandler}>Analyse</button>
-            <input type="text" className='bg-gray-300 border-amber-50 p-2 rounded-sm text-black' onChange={(e)=>{
+            <input type="text" className='bg-gray-200 border-amber-50 p-2 rounded-sm text-black' onChange={(e)=>{
                 setUsername(e.target.value)
             }} />
         </div>
-        <div className="mainData flex flex-col gap-2">
-            <div className="mainName text-black">
-               <p className='text-3xl font-bold font-mono'>Username:- {sampleUserDetails.username}</p>
+        <div className="mainData flex flex-col lg:gap-2 mb-15">
+            <div className="mainName text-black flex flex-col">
+               <p className='lg:text-xl text-lg font-semibold text-zinc-700 '>Username:-</p>
+               <p className='lg:text-3xl  text-xl font-semibold '>{sampleUserDetails.username}</p>
             </div>
-            <div className="dataContainer text-black text-xl font-semibold ">
-              
-                <div className="mainBox grid grid-cols-2 gap-3">
-                    <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center shadow-2xl rounded-sm border-gray-500">
-                        <div className="headerText flex gap-10"> 
-                            <h4>Rating:</h4>
+            <div className="dataContainer text-black lg:text-xl font-semibold ">
+                <div className="mainBox grid lg:grid-cols-2 gap-3">
+                    <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm ">   
+                        <div className="headerText flex gap-3 text-zinc-700"> 
+                            <h4 className=''>Rating -</h4>
                             <h4>{sampleUserDetails.rating}</h4>
                              </div>
                          <div className="rank">
-                            <h1 className='text-4xl font-bold'>{sampleUserDetails.rank}</h1>
+                            <h1 className='lg:text-4xl text-2xl font-semibold'>{sampleUserDetails.rank}</h1>
                          </div>
                     </div>
-                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center shadow-2xl rounded-sm border-gray-500">
+                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm border-gray-500 text-zinc-700">
                         <h3>Total Problem Solved</h3>
-                        <h1 className='text-4xl font-bold'>{sampleUserDetails.totalProblemSolved}</h1>
+                        <h1 className='lg:text-4xl text-2xl font-bold text-black'>{sampleUserDetails.totalProblemSolved}</h1>
                     </div>
-                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center shadow-2xl rounded-sm border-gray-500">
-                       <h3>Acceptance Rate</h3>
-                       <h1 className='text-4xl font-bold text-green-700'>{Math.round(sampleUserDetails.acceptanceRate)}%</h1>
+                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm border-gray-500">
+                       <h3 className='text-zinc-700'>Acceptance Rate</h3>
+                       <h1 className='lg:text-4xl text-2xl font-bold text-green-700'>{Math.round(sampleUserDetails.acceptanceRate)}%</h1>
                     </div>
-                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center shadow-2xl rounded-sm border-gray-500">
-                        <h3>Wrong Answer</h3>
-                        <h1 className='font-bold text-4xl text-red-600'>{sampleUserDetails.wrongAnswers}</h1>
+                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm border-gray-500">
+                        <h3 className='text-zinc-700'>Wrong Answer</h3>
+                        <h1 className='font-boldlg:text-4xl text-2xl text-red-600'>{sampleUserDetails.wrongAnswers}</h1>
                     </div>
                 </div>
             </div>
            
-            <div className="ratingwiseSolved flex gap-8 w-full self-center">
+            <div className="ratingwiseSolved flex lg:flex-row flex-col lg:gap-8 w-full self-center">
                 {/* <h3 className='font-bold text-xl text-black'>Rating Wise Solved Problems List:-</h3>
                 <table className=' gap-2 w-full text-black'>
                     <thead className='bg-zinc-200 text-black px-3 py-4'>
@@ -163,68 +163,52 @@ return (
                     
                     </tbody>
                 </table> */}
-                <RatingChart  rating = {sampleUserDetails.arrayRating} />
                 <TagChart tagged={sampleUserDetails.arrayTagged}/>
-            </div>
-            <div className="tagWiseSolved flex flex-col gap-3 items-center w-[80%] self-center">
-                {/* <h3 className='font-bold text-xl text-black'>Tag Wise Problem Solved :-</h3>
-                <table className=''>
-                      <thead className='bg-zinc-200 text-black'>
-                        <tr className='font-medium text-xl  '>
-                        <th className='text-left px-5 py-3'>No.</th>
-                        <th className='text-left  px-5 py-3'>Tag</th>
-                        <th className='text-left  px-5 py-3'>Problems Solved having this tag</th>
-                    </tr>
-                    </thead>
-                    <tbody className='bg-zinc-200'>
-                        {userDetails.arrayTagged.map((e:[string,number],idx)=>(
-                            <tr className='hover:bg-zinc-200 border-b-2 border-gray-500'>
-                        <td className='px-5 py-2 text-black ' >{idx+1}</td>
-                        <td className='px-5 py-2 text-black' >{e[0]}</td>
-                        <td className='px-5 py-2 text-black'>{e[1]}</td>
-                       </tr>
-                        ))}
-                    
-                    </tbody>
-                </table> */}
+                <RatingChart  rating = {sampleUserDetails.arrayRating} />
                 
-                     
             </div>
+         
             <div className="aiResponse flex flex-col gap-5">
                 <div className="analysis">
                    
-                   <div className="pointsContainer bg-zinc-200 rounded-md px-5 py-3 flex flex-col gap-3 text-black">
-                    <h3 className='font-bold text-xl text-black'>Analysis:-</h3>
-                     {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.analysisOfUser.map((e,idx)=>(
-                            <div className="points bg-zinc-200 rounded-sm px-2 py-1 flex gap-1" key={idx}>
-                            <h4>{idx+1}</h4>
+                   <div className="pointsContainer bg-zinc-200 rounded-md lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
+                    <h3 className='font-bold text-xl text-black border-b border-b-black'>Analysis:-</h3>
+                     <div className="pointsContainer">
+                        {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.analysisOfUser.map((e,idx)=>(
+                            <div className="points font-semibold rounded-sm px-2 py-1 flex lg:gap-5 gap-2 text-zinc-800" key={idx}>
+                            <h4>{idx+1}.</h4>
                            <h4>{e}</h4>
                          </div>
                           )):<></>}
+                     </div>
                    </div>
                 </div>
                 <div className="mistakes">
                     
-                    <div className="pointsContainer bg-zinc-200 rounded-md px-5 py-3 flex flex-col   gap-3 text-black">
-                        <h3 className='font-bold text-xl text-black'>Mistakes:-</h3>
-                          {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.mistakesUserMade.map((e,idx)=>(
-                            <div className="points bg-zinc-200 rounded-sm px-2 py-1 flex gap-1" key={idx}>
-                                <h4>{idx+1}</h4>
+                    <div className="pointsContainer bg-zinc-200 rounded-md lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
+                        <h3 className='font-bold text-xl text-black border-b border-b-black'>Mistakes:-</h3>
+                          <div className="pointsContainer">
+                            {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.mistakesUserMade.map((e,idx)=>(
+                            <div className="points font-semibold rounded-sm px-2 py-1 flex lg:gap-5 gap-2 text-zinc-800" key={idx}>
+                                <h4>{idx+1}.</h4>
                            <h4>{e}</h4>
                          </div>
                           )):<></>}
+                          </div>
                     </div>
                 </div>
                 <div className="tipsToImprove">
                     
-                    <div className="pointsContainer bg-zinc-200 rounded-md px-5 py-3  flex flex-col gap-3">
-                         <h3 className='font-bold text-xl text-black' >Tips To Improve:-</h3>
-                       {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.adviceUser.map((e,idx)=>(
-                            <div className="points bg-zinc-200 rounded-sm px-2 py-1 flex gap-1 text-black" key={idx}>
-                                <h4>{idx+1}</h4>
+                    <div className="pointsContainer bg-zinc-200 rounded-md lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 text-black">
+                         <h3 className='font-bold text-xl text-black border-b border-b-black' >Tips To Improve:-</h3>
+                      <div className="pointsContainer flex flex-col">
+                         {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.adviceUser.map((e,idx)=>(
+                            <div className="points  rounded-sm px-2  flex  text-zinc-800 font-semibold lg:gap-5 gap-2" key={idx}>
+                                <h4>{idx+1}.</h4>
                            <h4>{e}</h4>
                          </div>
                           )):<></>}
+                      </div>
                     </div>
                 </div>
             </div>

@@ -68,19 +68,13 @@ const  DoughnutChart = {
                 }
             }
         }
-        
     
-        
-
     }]
 }
 
-
-
-
 return (
 
-    <div className='w-1/2 '>
+    <div className='lg:w-1/2 w-full '>
          <Doughnut options={chartOptions} data={DoughnutChart}/>
     </div>
    
