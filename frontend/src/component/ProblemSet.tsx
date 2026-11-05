@@ -3,15 +3,18 @@ import { getProblemSet } from '../api'
 import { useUsername } from '../UserContext' 
 import { useLoading } from '../LoadingContext'
 import { useNavigate } from 'react-router-dom'
+import jsPDF from 'jspdf'
+import {autoTable} from 'jspdf-autotable'
 
 interface problem  {
  problemScore: number,
- problemName: String,
+ problemName: string,
  problemRating:number,
  tags:String[],
  contestId: number,
  index: String
 }
+
 
 const ProblemSet = () => { 
   const navigate = useNavigate();
@@ -74,8 +77,96 @@ const {loading,setLoading}  = useLoading();
       navigate('/main')
   }
 
-  function generatePDF(){
-    
+ async function generatePDF(){
+   
+ 
+  const doc = new jsPDF();
+  doc.setFillColor(23, 37, 84);
+doc.rect(0, 0, 210, 20, "F");
+
+
+  doc.setFont("helvetica", "bold");
+doc.setFontSize(22);
+doc.setTextColor(255, 255, 255);
+doc.text(
+    "PERSONALIZED PROBLEM SET",
+    doc.internal.pageSize.getWidth() / 2,
+    17,
+    { align: "center" }
+);
+
+
+doc.setTextColor(23, 37, 84);
+doc.setFont("helvetica", "bold");
+doc.setFontSize(14);
+
+doc.text("Train Your Brain..", 14, 28);
+  
+
+  // Add structured table using autotable plugin 
+
+  // "https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}` 
+  // problem set1 
+
+   const arr1:[number,string,string][]= problemSet1?problemSet1?.map((e:problem,idx:number)=>{
+    const url:string = `https://codeforces.com/problemset/problem/${e.contestId}/${e.index}`
+    const problem:string = e.problemName
+         return ([idx+1,problem,url]);
+   }):[];
+
+   
+  autoTable(doc,{
+    startY: 31,
+    head: [['ID', 'Name','question URL']],
+    body: [
+     ...arr1
+    ],
+  });
+  //@ts-ignore
+   let table = doc.lastAutoTable;
+   let finalY = table.finalY;
+
+   
+   // height should bee dynamic 
+   doc.text('Muscle Up..', 14, finalY+10);
+
+  // Add structured table using autotable plugin
+   const arr2:[number,string,string][]= problemSet2?problemSet2?.map((e:problem,idx:number)=>{
+    const url:string = `https://codeforces.com/problemset/problem/${e.contestId}/${e.index}`
+    const problem:string = e.problemName
+         return ([idx+1,problem,url]);
+   }):[];
+  autoTable(doc,{
+    startY: finalY+14,
+    head: [['ID', 'Name','question URL']],
+    body: [
+    ...arr2
+    ],
+  });
+
+  doc.addPage();
+   //@ts-ignore
+    table = doc.lastAutoTable;
+    finalY = table.finalY;
+   doc.text('Explore..', 14, 14)
+
+  // Add structured table using autotable plugin
+  const arr3:[number,string,string][]= problemSet3?problemSet3?.map((e:problem,idx:number)=>{
+    const url:string = `https://codeforces.com/problemset/problem/${e.contestId}/${e.index}`
+    const problem:string = e.problemName
+         return ([idx+1,problem,url]);
+   }):[];
+  
+  autoTable(doc,{
+    startY: 18,
+    head: [['ID', 'Name','question URL']],
+    body: [
+      ...arr3
+    ],
+  });
+  // Save the file
+  doc.save('PersonalizedPracticeSheet.pdf');
+
   }
   // url https://codeforces.com/problemset/problem/{contextId}/{index}
   return (

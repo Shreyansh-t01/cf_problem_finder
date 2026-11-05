@@ -5,7 +5,7 @@ import {RatingChart} from '../component/RatingChart'
 
 import { useLoading } from '../LoadingContext';
 import { TagChart } from './TagChart';
-import { sampleUserDetails } from '../sampleData';
+
 import {useNavigate} from 'react-router-dom'
 interface userDetailsTypes {
     username:string,
@@ -77,33 +77,33 @@ const MainPage = () => {
      
   }
    
-//    useEffect(()=>{
-//     async function dataHandling(){
-//        setLoading(true);
-//        await handleData();
-//        setLoading(false);
-//     }
-//     dataHandling();
-//    },[cfUsername])
-
-   const [username, setUsername] = useState("")
-
-   function submitHandler(){
-    if(username==""){
-        alert('enter username first');
-        return;
+   useEffect(()=>{
+    async function dataHandling(){
+       setLoading(true);
+       await handleData();
+       setLoading(false);
     }
-    setCfUsername(username)
-    return;
+    dataHandling();
+   },[cfUsername])
 
-   }
+//    const [username, setUsername] = useState("")
+
+//    function submitHandler(){
+//     if(username==""){
+//         alert('enter username first');
+//         return;
+//     }
+//     setCfUsername(username)
+//     return;
+
+//    }
    function navigationHandler(){
      // this function navigates the user to the problem set page  
      navigate('/problem')
      
    }
 
-   if(false){
+   if(loading){
     return(
         <div className='self-center text-2xl font-semibold'> Loading ...</div>
     )
@@ -120,7 +120,7 @@ return (
           <div className="mainContainer flex justify-between px-3">
                   <div className="mainName text-black flex flex-col">
                <p className='lg:text-xl text-lg font-semibold text-zinc-700 '>Username:-</p>
-               <p className='lg:text-3xl  text-lg font-semibold '>{sampleUserDetails.username}</p>
+               <p className='lg:text-3xl  text-lg font-semibold '>{userDetails.username}</p>
             </div>
             
           </div>
@@ -129,23 +129,23 @@ return (
                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm ">   
                         <div className="headerText flex gap-3 text-zinc-700"> 
                             <h4 className=''>Rating -</h4>
-                            <h4>{sampleUserDetails.rating}</h4>
+                            <h4>{userDetails.rating}</h4>
                              </div>
                          <div className="rank">
-                            <h1 className='lg:text-4xl text-2xl font-semibold'>{sampleUserDetails.rank}</h1>
+                            <h1 className='lg:text-4xl text-2xl font-semibold'>{userDetails.rank}</h1>
                          </div>
                     </div>
                      <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm border-gray-500 text-zinc-700">
                         <h3>Total Problem Solved</h3>
-                        <h1 className='lg:text-4xl text-2xl font-bold text-black'>{sampleUserDetails.totalProblemSolved}</h1>
+                        <h1 className='lg:text-4xl text-2xl font-bold text-black'>{userDetails.totalProblemSolved}</h1>
                     </div>
                      <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm border-gray-500">
                        <h3 className='text-zinc-700'>Acceptance Rate</h3>
-                       <h1 className='lg:text-4xl text-2xl font-bold text-green-700'>{Math.round(sampleUserDetails.acceptanceRate)}%</h1>
+                       <h1 className='lg:text-4xl text-2xl font-bold text-green-700'>{Math.round(userDetails.acceptanceRate)}%</h1>
                     </div>
                      <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm border-gray-500">
                         <h3 className='text-zinc-700'>Wrong Answer</h3>
-                        <h1 className='font-boldlg:text-4xl text-2xl text-red-600'>{sampleUserDetails.wrongAnswers}</h1>
+                        <h1 className='font-boldlg:text-4xl text-2xl text-red-600'>{userDetails.wrongAnswers}</h1>
                     </div>
                 </div>
             </div>
@@ -171,8 +171,8 @@ return (
                     
                     </tbody>
                 </table> */}
-                <TagChart tagged={sampleUserDetails.arrayTagged}/>
-                <RatingChart  rating = {sampleUserDetails.arrayRating} />
+                <TagChart tagged={userDetails.arrayTagged}/>
+                <RatingChart  rating = {userDetails.arrayRating} />
                 
             </div>
          
@@ -182,7 +182,7 @@ return (
                    <div className="pointsContainer bg-zinc-200 rounded-md lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
                     <h3 className='font-bold text-xl text-black border-b border-b-black'>Analysis:-</h3>
                      <div className="pointsContainer">
-                        {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.analysisOfUser.map((e,idx)=>(
+                        {userDetails.aiResponse? userDetails.aiResponse.analysisOfUser.map((e,idx)=>(
                             <div className="points font-semibold rounded-sm px-2 py-1 flex lg:gap-5 gap-2 text-zinc-800" key={idx}>
                             <h4>{idx+1}.</h4>
                            <h4>{e}</h4>
@@ -196,7 +196,7 @@ return (
                     <div className="pointsContainer bg-zinc-200 rounded-md lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
                         <h3 className='font-bold text-xl text-black border-b border-b-black'>Mistakes:-</h3>
                           <div className="pointsContainer">
-                            {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.mistakesUserMade.map((e,idx)=>(
+                            {userDetails.aiResponse? userDetails.aiResponse.mistakesUserMade.map((e,idx)=>(
                             <div className="points font-semibold rounded-sm px-2 py-1 flex lg:gap-5 gap-2 text-zinc-800" key={idx}>
                                 <h4>{idx+1}.</h4>
                            <h4>{e}</h4>
@@ -210,7 +210,7 @@ return (
                     <div className="pointsContainer bg-zinc-200 rounded-md lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 text-black">
                          <h3 className='font-bold text-xl text-black border-b border-b-black' >Tips To Improve:-</h3>
                       <div className="pointsContainer flex flex-col">
-                         {sampleUserDetails.aiResponse? sampleUserDetails.aiResponse.adviceUser.map((e,idx)=>(
+                         {userDetails.aiResponse? userDetails.aiResponse.adviceUser.map((e,idx)=>(
                             <div className="points  rounded-sm px-2  flex  text-zinc-800 font-semibold lg:gap-5 gap-2" key={idx}>
                                 <h4>{idx+1}.</h4>
                            <h4>{e}</h4>
