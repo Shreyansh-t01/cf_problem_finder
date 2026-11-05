@@ -65,8 +65,12 @@ const {loading,setLoading}  = useLoading();
   }
 
   useEffect(()=>{
+    if(!userContext.cfUsername){
+      navigate('/')
+      alert(`please enter a valid codeforce's username first`)
+    }
       handleData();
-  },[userContext.cfUsername])
+  },[])
     
   if(loading){
     return (
