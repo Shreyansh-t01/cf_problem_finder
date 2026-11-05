@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react'
+import  { useEffect, useState, } from 'react'
 import { useUsername } from '../UserContext';
 import { getUserData } from '../api';
 import {RatingChart} from '../component/RatingChart'
@@ -6,6 +6,7 @@ import {RatingChart} from '../component/RatingChart'
 import { useLoading } from '../LoadingContext';
 import { TagChart } from './TagChart';
 import { sampleUserDetails } from '../sampleData';
+import {useNavigate} from 'react-router-dom'
 interface userDetailsTypes {
     username:string,
     maxRating:number,
@@ -26,6 +27,7 @@ interface userDetailsTypes {
 
 }
 const MainPage = () => {
+    const navigate = useNavigate();
   const {cfUsername,setCfUsername} = useUsername()
   const [userDetails, setUserDetails] = useState<userDetailsTypes>({
     username:"shreyansh",
@@ -95,6 +97,11 @@ const MainPage = () => {
     return;
 
    }
+   function navigationHandler(){
+     // this function navigates the user to the problem set page  
+     navigate('/problem')
+     
+   }
 
    if(false){
     return(
@@ -106,16 +113,17 @@ const MainPage = () => {
 return (
     <div className="container text-white flex flex-col gap-3 mt-5 justify-center lg:w-[80%] border border-solid border-white p-3 mb-10 bg-gray-100 w-full font-[verdana]"> 
         <div className="serchBar flex gap-2 ">
-            <button className='bg-black border-black p-2 text-center rounded-sm' onClick={submitHandler}>Analyse</button>
-            <input type="text" className='bg-gray-200 border-amber-50 p-2 rounded-sm text-black' onChange={(e)=>{
-                setUsername(e.target.value)
-            }} />
+            <button className='bg-black border-black px-2 py-1 lg:text-xl text-center rounded-sm' onClick={navigationHandler}>Get Problem Set</button>
+            
         </div>
         <div className="mainData flex flex-col lg:gap-2 mb-15">
-            <div className="mainName text-black flex flex-col">
+          <div className="mainContainer flex justify-between px-3">
+                  <div className="mainName text-black flex flex-col">
                <p className='lg:text-xl text-lg font-semibold text-zinc-700 '>Username:-</p>
-               <p className='lg:text-3xl  text-xl font-semibold '>{sampleUserDetails.username}</p>
+               <p className='lg:text-3xl  text-lg font-semibold '>{sampleUserDetails.username}</p>
             </div>
+            
+          </div>
             <div className="dataContainer text-black lg:text-xl font-semibold ">
                 <div className="mainBox grid lg:grid-cols-2 gap-3">
                     <div className="ratingBox bg-zinc-200 flex flex-col justify-center items-center  rounded-sm ">   

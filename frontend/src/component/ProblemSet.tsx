@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getProblemSet } from '../api'
 import { useUsername } from '../UserContext' 
 import { useLoading } from '../LoadingContext'
+import { useNavigate } from 'react-router-dom'
 
 interface problem  {
  problemScore: number,
@@ -13,6 +14,7 @@ interface problem  {
 }
 
 const ProblemSet = () => { 
+  const navigate = useNavigate();
   const [problemSet1, setProblemSet1] = useState<problem[]>()
    const [problemSet2, setProblemSet2] = useState<problem[]>()
     const [problemSet3, setProblemSet3] = useState<problem[]>()
@@ -68,13 +70,38 @@ const {loading,setLoading}  = useLoading();
         <div>Loading ...</div>
     )
   }  
+  function navigationHandler(){
+      navigate('/main')
+  }
+
+  function generatePDF(){
+    
+  }
   // url https://codeforces.com/problemset/problem/{contextId}/{index}
   return (
-    <div className='flex flex-col items-center mt-5 bg-zinc-200'>
-      <h2 className='lg:text-4xl text-xl font-bold text-black'>Personalized Problem Set</h2>
-      {/* <div className="pdfContainer">
-        <button className='bg-black text-white rounded-md px-3 py-2'>Get PDF</button>
-      </div> */}
+    <div className='flex flex-col mt-5 items-center bg-zinc-200 '>
+     
+        
+          
+            
+         <div className="conti lg:w-[80%] w-full flex items-center flex-col">
+           <div className='self-start md:px-5 px-1 flex  justify-between w-full pt-2'>
+            <button className='button bg-black border-black px-2 py-1 lg:text-xl text-center rounded-sm text-white ' onClick={navigationHandler}>GetBack</button>
+            <div className='self-start md:px-5 px-1'>
+            <button className='button bg-amber-600 border-black px-2 py-1 lg:text-xl text-center rounded-sm text-white ' onClick={generatePDF}>GetPDF</button>
+          </div>
+          </div>
+          
+         
+          <h2 className='lg:text-4xl text-xl font-bold text-black '>Personalized Problem Set</h2>
+         </div>
+         
+      
+         
+        
+      
+        
+
       <div className="questionsContainer flex flex-col lg:gap-8 gap-4 border-2 border-black w-screen h-full justify-center items-center">
             <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-8 lg:py-4 px-3 py-3">
                 <h3 className='lg:text-4xl text-2xl font-bold'>Train Your Brain..</h3>
