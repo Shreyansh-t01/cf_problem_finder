@@ -76,6 +76,8 @@ const MainPage = () => {
      
      
   }
+
+  
    
    useEffect(()=>{
     async function dataHandling(){

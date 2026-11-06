@@ -3,7 +3,9 @@ import { userRouter } from './routes/userRoutes.js';
 import cors from 'cors'
 import { CORS_ORIGIN } from './env.js';
 import {problemSetConstructor} from './routes/problemRoute.js'
+import { connectCache } from './Services/mongoDB.js';
 
+connectCache();
 const app = express();
 
 app.use(express.json());

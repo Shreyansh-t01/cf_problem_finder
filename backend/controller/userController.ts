@@ -4,6 +4,9 @@ import type { db, userCredentials } from "../typesAndInterfaces/type.js";
 import {prisma} from '../lib/prisma.js'
 import { ai } from "./ai.js";
 import {z}  from 'zod'
+import { aiResposne } from "./aiQuery.js";
+import { queryCache } from "./CacheDataController.js";
+import { problemSetHandler } from "./problemsHandler.js";
 
 
 
@@ -86,9 +89,6 @@ if(user){
   })
 }
 
-
-
-
 const mpTaggedQuestions = await getTagCount(cfUsername);
 const mpRatingQuestions = await getRatingCount(cfUsername);
 const taggedQuestionobj =   Object.fromEntries(mpTaggedQuestions)
@@ -102,7 +102,7 @@ mpRatingQuestions.forEach((value,key)=>{
   arrayRating = [...arrayRating,[key,value]]
 })
 userDetails.arrayRating = arrayRating;
-userDetails.arrayTagged = arrayTagged
+userDetails.arrayTagged = arrayTagged;
 const prompt = `I am providing you user rating , rating wise solved problems by the user and tag wise solved problems(one problem can have multiple tags) , acceptance rate of the user , total problem solved by the user till now . You have to analyze the given data and tell the user some actionable insights to improve their rating and become good at competitive programming and also give some tips to the user that can help him reach to his next rating tier. these are some ideas you can refer to to give tips - 
 
 1.  may be user is practicing the questions that are not good for this rating
@@ -141,26 +141,31 @@ const jsonFormatOfSchema = z.toJSONSchema(responseSchema,{
   target:"draft-07"
 })
 
-let aiQuery;
-try{
- aiQuery = await ai.models.generateContent({
-  model:"gemini-2.5-flash",
-  contents:prompt,
-  config:{
-    responseMimeType:`application/json`,
-    responseJsonSchema:jsonFormatOfSchema  }
-  
- })
- console.log("gemini api called")
-if (!aiQuery.text) {
+let responseCached = await queryCache(userDetails.username)
+if(responseCached.state===false){
+  // means we need to run now the LLM call 
+ const aiQuery = await aiResposne(prompt,jsonFormatOfSchema);
+if (!aiQuery?.text) {
   throw new Error("Model did not return any text");
 }
-const answer = JSON.parse(aiQuery.text)
+else{
+const texti = aiQuery.text?aiQuery.text:"";
+const answer = JSON.parse(texti);
+// at this time I am thinking to cache problems also along side with the ai response because user will definetely visit the problem set page we can show him cached set 
+const problemSet = 
 userDetails.aiResponse = answer;
-}catch(err){
-  console.log("gemini request failed - "+err);
-
 }
+}
+else {
+  const answer = {
+     analysisOfUser:responseCached.data.analysis,
+     mistakesUserMade:responseCached.data.mistakes,
+     adviceUser:responseCached.data.tips
+  }
+  userDetails.aiResponse = answer;
+}
+
+
 
   console.log(userDetails)
  return res.status(200).json({
