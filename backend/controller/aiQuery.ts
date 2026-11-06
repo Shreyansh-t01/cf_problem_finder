@@ -1,7 +1,7 @@
 import { ai } from "./ai.js";
 import {z} from 'zod'
 
-export async function aiResposne(prompt:string,jsonFormatOfSchema:z.core.JSONSchema.BaseSchema){
+export async function aiResponse(prompt:string,jsonFormatOfSchema:z.core.JSONSchema.BaseSchema){
     let aiQuery;
       // mongodb query first to check wether the AI response is present in the indexed cache or not 
 

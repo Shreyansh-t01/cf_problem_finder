@@ -7,7 +7,7 @@ import { MONGO_URI } from "../env.js";
 export async function connectCache(){
     try{
        
-         mongoose.connect(MONGO_URI?MONGO_URI:"")
+        await mongoose.connect(MONGO_URI?MONGO_URI:"")
         console.log("MONGO-DB connected")
     }catch(err){
         console.log("Error Connecting MongoDB")
@@ -33,6 +33,6 @@ const cacheSchema = new mongoose.Schema({
         problemSet3:[{name:String,contestID:String,index:Number}]
     }
 })
-cacheSchema.index({userID:1})
+cacheSchema.index({userId:1})
 
 export const cacheModel =  mongoose.model('Cache',cacheSchema);

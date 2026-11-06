@@ -2,9 +2,11 @@ import mongoose from "mongoose"
 import { cacheModel } from "../Services/mongoDB.js"
 
 export const queryCache = async (userID:string)=>{
+    console.log("user id - "+userID);
     const query = await cacheModel.find({
-        userID:userID
+        userId:userID
     });
+    console.log("query answered - "+ query)
 
     if(query.length===0){
         return {
@@ -13,7 +15,7 @@ export const queryCache = async (userID:string)=>{
             data:[]
         }
     }
-
+   
     return {
         state:true,
         message:"got the data from the cached storage ",
