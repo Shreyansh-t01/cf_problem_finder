@@ -6,10 +6,18 @@ import { ai } from "./ai.js";
 import {z}  from 'zod'
 import { aiResposne } from "./aiQuery.js";
 import { queryCache } from "./CacheDataController.js";
-import { problemSetHandler } from "./problemsHandler.js";
+import { problemSetHandler, workHandler } from "./problemsHandler.js";
+import { cacheModel } from "../Services/mongoDB.js";
 
 
-
+interface problemType{
+   problemScore:number,
+      problemRating:number,
+      problemName:string,
+      tags:string[],
+      contestId:number,
+      index:number
+}
 
 export const getUser = async (req:Request,res:Response)=>{
   const cfUsername:string = req.body.cfUsername;
@@ -142,7 +150,7 @@ const jsonFormatOfSchema = z.toJSONSchema(responseSchema,{
 })
 
 let responseCached = await queryCache(userDetails.username)
-if(responseCached.state===false){
+if((responseCached.state===false) || (responseCached.data.length<=0)){
   // means we need to run now the LLM call 
  const aiQuery = await aiResposne(prompt,jsonFormatOfSchema);
 if (!aiQuery?.text) {
@@ -151,16 +159,43 @@ if (!aiQuery?.text) {
 else{
 const texti = aiQuery.text?aiQuery.text:"";
 const answer = JSON.parse(texti);
-// at this time I am thinking to cache problems also along side with the ai response because user will definetely visit the problem set page we can show him cached set 
-const problemSet = 
-userDetails.aiResponse = answer;
+// at this time I am thinking to cache problems also along side with the ai response because user will definetely visit the problem set page we can show him cached set  
+let problemSet;
+try{
+   problemSet = await workHandler(userDetails.username)
+}catch(err){
+  console.log(err,"could not cache problem statements ");
 }
+userDetails.aiResponse = answer;
+
+const questionsArr1 = problemSet?.problemSet1?problemSet.problemSet1.map((e:problemType)=>{
+ return {name:e.problemName,contestID:e.contestId,index:e.index};
+}):[];
+const questionsArr2 = problemSet?.problemSet2?problemSet.problemSet2.map((e:problemType)=>{
+ return {name:e.problemName,contestID:e.contestId,index:e.index};
+}):[];
+const questionsArr3 = problemSet?.problemSet3?problemSet.problemSet3.map((e:problemType)=>{
+ return {name:e.problemName,contestID:e.contestId,index:e.index};
+}):[];
+const query = await cacheModel.create({
+   userId:userDetails.username,
+   analysis:answer.analysisOfUser,
+   mistakes:answer.mistakesUserMade,
+   tips:answer.adviceUser,
+   problemSets:{
+    problemSet1:[...questionsArr1],
+    problemSet2:[...questionsArr2],
+    problemSet3:[...questionsArr3]
+   }
+})
+}
+
 }
 else {
   const answer = {
-     analysisOfUser:responseCached.data.analysis,
-     mistakesUserMade:responseCached.data.mistakes,
-     adviceUser:responseCached.data.tips
+     analysisOfUser:responseCached.data[0]?.analysis?responseCached.data[0]?.analysis:[""],
+     mistakesUserMade:responseCached.data[0]?.mistakes?responseCached.data[0]?.mistakes:[""],
+     adviceUser:responseCached.data[0]?.tips?responseCached.data[0]?.tips:[""]
   }
   userDetails.aiResponse = answer;
 }

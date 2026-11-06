@@ -3,6 +3,7 @@ import axios from 'axios'
 import { TAG_PEAK_RATINGS as tagRating } from '../dataMaps/tagsRating.js';
 import { problemSet } from '../dataMaps/problemSet.js';
 import { globalScore } from './globalScore.js';
+import { string } from 'zod';
 
 interface submissionType{
 
@@ -119,15 +120,35 @@ function problemFilter(
 }
 export const problemSetHandler = async (req:Request ,res:Response)=>{
 
-  const userId = req.params.userId;
-  console.log(userId);
+  const userId= req.params.userId;
+   if(typeof userId!== 'string'){
+     return res.status(400).send({
+        message:"Invalid Username"
+      })
+   }
   // user submissions 
+  let response;
+  try{
+   
+    response = await workHandler(userId);
+  }catch(err){
+    console.log(err instanceof Error ?err.message:err)
+    return res.status(400).send({
+      message:"something went wrong"
+    })
+  }
+
+  res.status(200).send(response);
+  
+}
+
+export const workHandler = async (userId:string)=>{
   let stat;
   try{
     stat = await axios.get(`https://codeforces.com/api/user.status?handle=${userId}`)
     console.log("user stats received")
   }catch(err){
-    console.log('codeforces api is not responding')
+    throw new Error("CF api failure")
   }
   // segregating the entire submissions into accepted and attempted category
   const arr = stat?.data.result;
@@ -160,7 +181,7 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
     userInfo = await axios.get(`https://codeforces.com/api/user.info?handles=${userId}`)
   
   }catch(err){
-    console.log("Error Message :- ",err);
+    throw new Error("user information not found")
   }
   
   // getting user rating 
@@ -313,14 +334,15 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
   
     
 
-   res.send({
+  const reply = {
     message:"problem set generated",
     problemSet1:problemSet1,
     problemSet2:problemSet2,
     problemSet3:problemSet3
-   })
-}
+   }
 
+   return reply;
+}
 
  
 
