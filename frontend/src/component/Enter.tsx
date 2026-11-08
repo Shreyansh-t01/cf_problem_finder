@@ -17,7 +17,7 @@ const Enter = () => {
         navigate('/main')
    }
   return (
-     <div className=' flex flex-col gap-5 w-screen min-h-40 justify-center items-center'>
+    <div className=' flex flex-col gap-5 w-screen min-h-40 justify-center items-center'>
         <input type="text" className=' bg-white p-1.5 border border-gray-700 rounded-sm' onChange={(e)=> setCfUsername(e.target.value)} value={cfUsername}/>
         <button className='enterButton  border border-black py-2 px-2 rounded-sm bg-gray-700 text-white' onClick={submitHandler}>Enter</button>
      </div>

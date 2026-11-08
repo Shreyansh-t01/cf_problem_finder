@@ -2,7 +2,6 @@ import mongoose from "mongoose"
 import { cacheModel } from "../Services/mongoDB.js"
 
 export const queryCache = async (userID:string)=>{
-    console.log("user id - "+userID);
     const query = await cacheModel.find({
         userId:userID
     });

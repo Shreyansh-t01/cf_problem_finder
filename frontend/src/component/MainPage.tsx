@@ -152,7 +152,7 @@ return (
                 </div>
             </div>
            
-            <div className="ratingwiseSolved flex lg:flex-row flex-col lg:gap-8 w-full self-center">
+            <div className="ratingwiseSolved flex lg:flex-row flex-col lg:gap-8 w-full self-center ">
                 {/* <h3 className='font-bold text-xl text-black'>Rating Wise Solved Problems List:-</h3>
                 <table className=' gap-2 w-full text-black'>
                     <thead className='bg-zinc-200 text-black px-3 py-4'>

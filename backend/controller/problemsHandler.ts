@@ -4,6 +4,7 @@ import { TAG_PEAK_RATINGS as tagRating } from '../dataMaps/tagsRating.js';
 import { problemSet } from '../dataMaps/problemSet.js';
 import { globalScore } from './globalScore.js';
 import { string } from 'zod';
+import { cacheModel } from '../Services/mongoDB.js';
 
 interface submissionType{
 
@@ -53,8 +54,10 @@ interface problemType{
     points?:number,
     solvedCount:number
 }
-interface problemScoreObj{
+ export interface problemScoreObj{
   problemScore:number,
+  problemRating:number,
+  problemName:string
   contestId: number,
   index:string,
   tags:string[]
@@ -111,6 +114,7 @@ function problemFilter(
      
      return obj;
   })
+  
   problemsWithScore.sort((a:problemScoreObj,b:problemScoreObj)=> b.problemScore-a.problemScore)
   
   const reqProblems = problemsWithScore.slice(0,slotsNeeded)
@@ -127,15 +131,28 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
       })
    }
   // user submissions 
-  let response;
+  let response ;
+  // db call first 
   try{
    
-    response = await workHandler(userId);
+     const result = await cacheModel.findOne({userId:userId});
+     if(!result){ throw new Error("DB query failed")}
+
+     response ={
+      message:"problem set generated",
+      problemSet1:result.problemSets?.problemSet1?result.problemSets?.problemSet1:[],
+      problemSet2:result.problemSets?.problemSet2?result.problemSets?.problemSet2:[],
+      problemSet3:result.problemSets?.problemSet3?result.problemSets?.problemSet3:[]
+     }      
   }catch(err){
-    console.log(err instanceof Error ?err.message:err)
-    return res.status(400).send({
-      message:"something went wrong"
-    })
+    try{
+      response  = await workHandler(userId)
+    }catch(error){
+        return res.status(400).send({
+          message:"error occured",
+          status:false
+        })
+    }
   }
 
   res.status(200).send(response);
@@ -143,15 +160,17 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
 }
 
 export const workHandler = async (userId:string)=>{
-  let stat;
+   let stat;
   try{
     stat = await axios.get(`https://codeforces.com/api/user.status?handle=${userId}`)
     console.log("user stats received")
   }catch(err){
     throw new Error("CF api failure")
   }
+
   // segregating the entire submissions into accepted and attempted category
   const arr = stat?.data.result;
+  console.log("arr formed in between")
   let cfSubmissions = [];
   const excludedId  = new Set<string>();  // storing questions id which are already solved or excluded 
   for(const ele of arr){
@@ -169,17 +188,13 @@ export const workHandler = async (userId:string)=>{
   
       cfSubmissions.push(obj);
   } 
-  console.log("cf submission and excluded id set created")
-  
   // this is holding the questions solved successfully by the user 
   const accSubmissions = cfSubmissions.filter((e)=> e.verdict=='OK' && e.problem.rating!=="")
-  
-  
   // getting user information
   let userInfo;
   try{
     userInfo = await axios.get(`https://codeforces.com/api/user.info?handles=${userId}`)
-  
+    
   }catch(err){
     throw new Error("user information not found")
   }
@@ -218,9 +233,9 @@ export const workHandler = async (userId:string)=>{
         const ratingDelta = ac.problem.rating - Ru; 
           // tag ka rating difference from the user rating 
           const diffWeight = Math.max(0.1,1+(ratingDelta/400));  // user rating se kitna close rating ka tag hai uska score 
-          console.log(diffWeight)
+         
           const problemScore = recencyWeight*diffWeight ;  
-          console.log(problemScore) 
+         
 
           proficiencyScore+=problemScore;
         }
@@ -252,7 +267,6 @@ export const workHandler = async (userId:string)=>{
   valueMap.sort((a,b)=> b.tagValue-a.tagValue)
    // this allocation array now holds top 4 tags and their slots out of 18
   const topTags = valueMap.slice(0,4);
-  console.log(topTags)
   const totalSlots = 18;  // this is slot one for higher rating problems to strengthen user rating 
    // adding up the tags value 
    let totalWeight = 0;
@@ -265,8 +279,7 @@ export const workHandler = async (userId:string)=>{
      if(i===topTags.length-1){
       return { tag:e.tag , slots: totalSlots-allocated };
      }
-     console.log("tag value:- ",e.tagValue)
-     console.log("total weight",totalWeight)
+    
      const slots = Math.round(totalSlots*(e.tagValue/totalWeight));
      console.log(slots)
      allocated+=slots;
@@ -332,7 +345,7 @@ export const workHandler = async (userId:string)=>{
      return arr;
    })
   
-    
+    console.log("first array ka first element ->"+problemSet1[0][0].problemName+" contest id ->"+problemSet1[0][0].contestId)
 
   const reply = {
     message:"problem set generated",
@@ -342,7 +355,8 @@ export const workHandler = async (userId:string)=>{
    }
 
    return reply;
-}
+ }
+
 
  
 

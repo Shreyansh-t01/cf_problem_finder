@@ -7,12 +7,10 @@ import ProblemSet from "./component/ProblemSet"
 
 
 function App() {
-  
-
   return (
-    <>
+  
     
-    <div className="mainContainer flex flex-col  items-center justify-center bg-gray-300 ">
+     <div className="mainContainer flex flex-col  items-center justify-center bg-gray-300 ">
      <h1 className="lg:text-7xl text-4xl  font-semibold bg-gray-100  text-center text-gray-950 w-[80%] font-[verdana] border border-solid border-white border-d-black">CF HELPER</h1>
    
    <Routes>
@@ -20,12 +18,7 @@ function App() {
      <Route path="/main" element = {<MainPage/>} />
      <Route path="/problem" element={<ProblemSet/>} />
    </Routes>
-
-    
-    </div>
-
-
-    </>
+   </div>
   )
 }
 

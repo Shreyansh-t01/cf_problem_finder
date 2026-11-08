@@ -10,7 +10,7 @@ export async function connectCache(){
         await mongoose.connect(MONGO_URI?MONGO_URI:"")
         console.log("MONGO-DB connected")
     }catch(err){
-        console.log("Error Connecting MongoDB")
+        console.log("Error Connecting MongoDB"+err)
     }
 }
 
@@ -28,11 +28,21 @@ const cacheSchema = new mongoose.Schema({
     mistakes:[String],
     tips:[String],
     problemSets:{
-        problemSet1:[{name:String,contestID:String,index:Number}],
-        problemSet2:[{name:String,contestID:String,index:Number}],
-        problemSet3:[{name:String,contestID:String,index:Number}]
+        problemSet1:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String}]],
+        problemSet2:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String}]],
+        problemSet3:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String}]]
+    },
+    expiresAt:{
+        type:Date,
+        required:true
     }
 })
-cacheSchema.index({userId:1})
+cacheSchema.index({userId:1},
+)
+cacheSchema.index(
+    {expiresAt:1},{
+        expireAfterSeconds:0
+    }
+)
 
 export const cacheModel =  mongoose.model('Cache',cacheSchema);

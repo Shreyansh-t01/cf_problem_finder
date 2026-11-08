@@ -6,8 +6,9 @@ import { ai } from "./ai.js";
 import {z}  from 'zod'
 import { aiResponse } from "./aiQuery.js";
 import { queryCache } from "./CacheDataController.js";
-import { problemSetHandler, workHandler } from "./problemsHandler.js";
+import { problemSetHandler, workHandler, type problemScoreObj } from "./problemsHandler.js";
 import { cacheModel } from "../Services/mongoDB.js";
+import { SYSTEM_PROMPT } from "../dataMaps/SystemPrompts.js";
 
 
 interface problemType{
@@ -111,14 +112,7 @@ mpRatingQuestions.forEach((value,key)=>{
 })
 userDetails.arrayRating = arrayRating;
 userDetails.arrayTagged = arrayTagged;
-const prompt = `I am providing you user rating , rating wise solved problems by the user and tag wise solved problems(one problem can have multiple tags) , acceptance rate of the user , total problem solved by the user till now . You have to analyze the given data and tell the user some actionable insights to improve their rating and become good at competitive programming and also give some tips to the user that can help him reach to his next rating tier. these are some ideas you can refer to to give tips - 
-
-1.  may be user is practicing the questions that are not good for this rating
-2.  may be user is not solving questions more than his current rating
-3. may be user has not solved good amount of questions yet on platform 
-4. may be he is making a lot of small mistaked / minor mistaked in implementation
-
-analyze users data as per your inteligence and give some advice to him to improve and make sure you give only important and crisp information.
+const prompt = `${SYSTEM_PROMPT}.
 user details are given blow:-
 userDetails:${JSON.stringify({
   rating:userDetails.rating,
@@ -127,7 +121,6 @@ userDetails:${JSON.stringify({
   maxRating:userDetails.maxRating,
   tagWisePracticedProblems:taggedQuestionobj,
   ratingWisePracticedProblems:ratingQuestionObj
-
 })} and these are the user's submission detail for you to understand his submission pattern and heat map - ${stat}
 the response should be in the format given to you
 {analysisOfUser:["first line","second line" ...],
@@ -148,12 +141,24 @@ const responseSchema = z.object({
 const jsonFormatOfSchema = z.toJSONSchema(responseSchema,{
   target:"draft-07"
 })
-
-let responseCached = await queryCache(userDetails.username)
-console.log("cached data is comming "+responseCached.data[0] )
-if((responseCached.state===false) || (responseCached.data.length<=0)){
+let responseCached;
+try{
+   responseCached = await queryCache(userDetails.username)
+   if((responseCached.state===false) || (responseCached.data.length<=0)){
+    throw new Error("db query failure")
+   }
+   const answer = {
+     analysisOfUser:responseCached.data[0]?.analysis?responseCached.data[0]?.analysis:[""],
+     mistakesUserMade:responseCached.data[0]?.mistakes?responseCached.data[0]?.mistakes:[""],
+     adviceUser:responseCached.data[0]?.tips?responseCached.data[0]?.tips:[""]
+  }
+  userDetails.aiResponse = answer;
+}catch(err){
+   console.log(err);
+  
   // means we need to run now the LLM call 
  const aiQuery = await aiResponse(prompt,jsonFormatOfSchema);
+ console.log("LLM call")
 if (!aiQuery?.text) {
   throw new Error("Model did not return any text");
 }
@@ -161,56 +166,43 @@ else{
 const texti = aiQuery.text?aiQuery.text:"";
 const answer = JSON.parse(texti);
 // at this time I am thinking to cache problems also along side with the ai response because user will definetely visit the problem set page we can show him cached set  
-// let problemSet;
-// try{
-//   //  problemSet = await workHandler(userDetails.username)
-// }catch(err){
-//   console.log(err,"could not cache problem statements ");
-// }
-// userDetails.aiResponse = answer;
-
-// const questionsArr1 = problemSet?.problemSet1?problemSet.problemSet1.map((e:problemType)=>{
-//  return {name:e.problemName,contestID:e.contestId,index:e.index};
-// }):[];
-// const questionsArr2 = problemSet?.problemSet2?problemSet.problemSet2.map((e:problemType)=>{
-//  return {name:e.problemName,contestID:e.contestId,index:e.index};
-// }):[];
-// const questionsArr3 = problemSet?.problemSet3?problemSet.problemSet3.map((e:problemType)=>{
-//  return {name:e.problemName,contestID:e.contestId,index:e.index};
-// }):[];
-const query = await cacheModel.create({
+let problemSet;
+let questionsArr1;
+let questionsArr2;
+let questionsArr3;
+try{
+   problemSet = await workHandler(userDetails.username);
+    
+    questionsArr1 = problemSet.problemSet1;
+    questionsArr2 = problemSet.problemSet2;
+    questionsArr3 = problemSet.problemSet3;
+   
+   const query = await cacheModel.create({
    userId:userDetails.username,
    analysis:answer.analysisOfUser,
    mistakes:answer.mistakesUserMade,
    tips:answer.adviceUser,
    problemSets:{
-    // problemSet1:[...questionsArr1],
-    // problemSet2:[...questionsArr2],
-    // problemSet3:[...questionsArr3]
-   }
+    problemSet1:[...questionsArr1],
+    problemSet2:[...questionsArr2],
+    problemSet3:[...questionsArr3]
+   },
+   expiresAt:new Date(Date.now()+15*24*60*60*1000)
 })
+
+}catch(err){
+  console.log(err,"could not cache problem statements ");
 }
+userDetails.aiResponse = answer;
 
 }
-else {
-  const answer = {
-     analysisOfUser:responseCached.data[0]?.analysis?responseCached.data[0]?.analysis:[""],
-     mistakesUserMade:responseCached.data[0]?.mistakes?responseCached.data[0]?.mistakes:[""],
-     adviceUser:responseCached.data[0]?.tips?responseCached.data[0]?.tips:[""]
-  }
-  userDetails.aiResponse = answer;
 }
-
-
-
-  console.log(userDetails)
  return res.status(200).json({
     message:"user entered",
     userDetails:userDetails,
-    verdict:true
+    verdict:true  
   })
 }
-
 
 export const getTagCount=async(cfUsername:string):Promise<Map<string, number>>=>{
 
