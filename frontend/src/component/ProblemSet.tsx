@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getProblemSet } from '../api'
+import { getProblemSet, updateProblemDoneStatus } from '../api'
 import { useUsername } from '../UserContext' 
 import { useLoading } from '../LoadingContext'
 import { useNavigate } from 'react-router-dom'
@@ -12,7 +12,8 @@ interface problem  {
  problemRating:number,
  tags:String[],
  contestId: number,
- index: String
+ index: string,
+ doneStatus?: boolean
 }
 
 
@@ -79,6 +80,23 @@ const {loading,setLoading}  = useLoading();
   }  
   function navigationHandler(){
       navigate('/main')
+  }
+
+  async function handleDoneStatusChange(problem:problem, doneStatus:boolean){
+    try{
+      await updateProblemDoneStatus(userContext.cfUsername, problem.contestId, problem.index, doneStatus)
+      const updateProblem = (problemSet:problem[] | undefined) => problemSet?.map((item) =>
+        item.contestId === problem.contestId && item.index === problem.index
+          ? {...item, doneStatus}
+          : item
+      )
+      setProblemSet1(updateProblem(problemSet1))
+      setProblemSet2(updateProblem(problemSet2))
+      setProblemSet3(updateProblem(problemSet3))
+    }catch(err){
+      console.log("error updating problem status", err)
+      alert("Could not update problem status. Please try again.")
+    }
   }
 
  async function generatePDF(){
@@ -174,22 +192,16 @@ doc.text("Train Your Brain..", 14, 28);
   }
   // url https://codeforces.com/problemset/problem/{contextId}/{index}
   return (
-    <div className='flex flex-col mt-5 items-center bg-zinc-200 '>
-     
-        
-          
-            
-         <div className="conti lg:w-[80%] w-full flex items-center flex-col">
-           <div className='self-start md:px-5 px-1 flex  justify-between w-full pt-2'>
-            <button className='button bg-black border-black px-2 py-1 lg:text-xl text-center rounded-sm text-white ' onClick={navigationHandler}>GetBack</button>
-            <div className='self-start md:px-5 px-1'>
-            <button className='button bg-amber-600 border-black px-2 py-1 lg:text-xl text-center rounded-sm text-white ' onClick={generatePDF}>GetPDF</button>
+    <div className='flex flex-col mt-5 items-center bg-[#F1F5F9]'>    
+        <div className="buttonsAndHeads flex justify-between items-center lg:w-[80%] w-full">
+          <div className="buttonfield">
+            <button className='bg-black text-white px-2 py-1 m-2 rounded-md ' onClick={navigationHandler}>Get Back</button>
           </div>
+          <h2 className='text-3xl font-semibold'>Personalized Problem Set</h2>
+          <div className="buttonfield">
+            <button className='bg-amber-600 text-white px-2 py-1 m-2 rounded-md ' onClick={generatePDF}>GetPDF</button>
           </div>
-          
-         
-          <h2 className='lg:text-4xl text-xl font-bold text-black '>Personalized Problem Set</h2>
-         </div>
+        </div>
          
       
          
@@ -197,7 +209,7 @@ doc.text("Train Your Brain..", 14, 28);
       
         
 
-      <div className="questionsContainer flex flex-col lg:gap-8 gap-4 border-2 border-black w-screen h-full justify-center items-center">
+      <div className="questionsContainer flex flex-col lg:gap-8 gap-4 border-2 border-black w-full h-full justify-center items-center">
             <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-8 lg:py-4 px-3 py-3">
                 <h3 className='lg:text-4xl text-2xl font-bold'>Train Your Brain..</h3>
                  {problemSet1?.map((e:problem,idx)=>{
@@ -206,6 +218,10 @@ doc.text("Train Your Brain..", 14, 28);
                          <div className="counter">{idx+1}.</div>
                          <div className="problemLink">
                          <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
+                         </div>
+
+                         <div className="toggle">
+                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} />
                          </div>
                         </div>
                      )
@@ -220,6 +236,9 @@ doc.text("Train Your Brain..", 14, 28);
                          <div className="problemLink">
                          <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
                          </div>
+                         <div className="toggle">
+                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} />
+                         </div>
                         </div>
                      )
                  })}
@@ -232,6 +251,9 @@ doc.text("Train Your Brain..", 14, 28);
                          <div className="counter">{idx+1}</div>
                          <div className="problemLink">
                          <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
+                         </div>
+                         <div className="toggle">
+                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} />
                          </div>
                         </div>
                      )

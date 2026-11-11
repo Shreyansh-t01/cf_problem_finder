@@ -68,7 +68,7 @@ for(i=0;i<sorted.length;i++){
       tooltip: {
         backgroundColor: '#111827',
         padding: 12,
-        
+    
         cornerRadius: 8,
         displayColors: false,
         callbacks: {
@@ -82,7 +82,7 @@ for(i=0;i<sorted.length;i++){
         grid: { display: false },
         border: { display: false },
         title: { display: true, text: 'Rating', color: '#6B7280' },
-        ticks: { color: '#6B7280', padding: 8 },
+        ticks: { color: '#6B7280', padding: 6 },
       },
       y: {
         beginAtZero: true,
@@ -90,13 +90,13 @@ for(i=0;i<sorted.length;i++){
         border: { display: false },
         grid: { color: 'rgba(0,0,0,0.06)' },
         title: { display: true, text: 'Number of questions', color: '#6B7280' },
-        ticks: { color: '#6B7280', padding: 8, maxTicksLimit: 6 },
+        ticks: { color: '#6B7280', padding: 2, maxTicksLimit: 6 },
       },
     },
   };
 
   return (
-    <div className='lg:w-1/2 w-full'>
+    <div className='lg:w-1/2 w-full bg-white rounded-2xl'>
       <Bar options={options} data={data} />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo,useRef } from 'react'
 import {
     Chart as ChartJS,
     ArcElement,
@@ -28,13 +28,13 @@ export const TagChart = (props:taggedType)=>{
             cutout: '66%',
         }],
     }), [props.tagged])
-
+     const chartRef = useRef<ChartJS<'doughnut'> | null>(null)
     const chartOptions: ChartOptions<'doughnut'> = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: true,
+                display: false,
                 position: 'bottom',
                 align: 'center',
                 labels: {
@@ -59,15 +59,45 @@ export const TagChart = (props:taggedType)=>{
         },
     }
 
-    return (
-        <div className="chart-card">
-            {/* <div className="mb-4">
-                <h3 className="text-sm font-bold text-[#202a40]">Problems by tag</h3>
-                <p className="mt-1 text-xs text-[#9099ab]">Topics covered in your solved set</p>
-            </div> */}
-            <div className="chart-canvas ">
-                <Doughnut options={chartOptions} data={data}/>
-            </div>
+    
+       return (
+    <div className="chart-card lg:w-1/2">
+
+        <div className="chart-canvas">
+            <Doughnut
+                ref={chartRef}
+                options={chartOptions}
+                data={data}
+            />
         </div>
-    )
+
+        <div className="legend-container text-black">
+            {props.tagged.map(([tag], index) => (
+                <button
+                    key={tag}
+                    onClick={() => {
+                        const chart = chartRef.current
+                        if (!chart) return
+
+                        chart.toggleDataVisibility(index)
+                        chart.update()
+                    }}
+                    className="legend-item"
+                >
+                    <span
+                        className="legend-dot"
+                        style={{
+                            backgroundColor:
+                                palette[index % palette.length]
+                        }}
+                    />
+
+                    {tag}
+                </button>
+            ))}
+        </div>
+
+    </div>
+)
+    
 }

@@ -28,9 +28,9 @@ const cacheSchema = new mongoose.Schema({
     mistakes:[String],
     tips:[String],
     problemSets:{
-        problemSet1:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String}]],
-        problemSet2:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String}]],
-        problemSet3:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String}]]
+        problemSet1:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String,doneStatus:{type:Boolean,default:false}}]],
+        problemSet2:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String,doneStatus:{type:Boolean,default:false}}]],
+        problemSet3:[[{problemScore:Number,problemRating:Number,problemName:String,tags:[String],contestId:Number,index:String,doneStatus:{type:Boolean,default:false}}]]
     },
     expiresAt:{
         type:Date,

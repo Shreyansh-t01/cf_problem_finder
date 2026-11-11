@@ -100,7 +100,7 @@ if(user){
 
 const mpTaggedQuestions = await getTagCount(cfUsername);
 const mpRatingQuestions = await getRatingCount(cfUsername);
-const taggedQuestionobj =   Object.fromEntries(mpTaggedQuestions)
+const taggedQuestionobj = Object.fromEntries(mpTaggedQuestions)
 const ratingQuestionObj = Object.fromEntries(mpRatingQuestions)
 let arrayRating:[number,number][] = [];
 let arrayTagged:[string,number][]= [];
@@ -158,7 +158,6 @@ try{
   
   // means we need to run now the LLM call 
  const aiQuery = await aiResponse(prompt,jsonFormatOfSchema);
- console.log("LLM call")
 if (!aiQuery?.text) {
   throw new Error("Model did not return any text");
 }

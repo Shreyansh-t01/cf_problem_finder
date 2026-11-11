@@ -158,6 +158,46 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
   res.status(200).send(response);
   
 }
+ export const problemStatusHandler = async (req:Request,res:Response)=>{
+  const {userId, contestId, index, doneStatus} = req.body;
+
+  if(typeof userId !== 'string' || typeof contestId !== 'number' || typeof index !== 'string' || typeof doneStatus !== 'boolean'){
+    return res.status(400).send({message:"Invalid problem status update"});
+  }
+
+  try{
+    const result = await cacheModel.findOne({userId});
+    if(!result){
+      return res.status(404).send({message:"Problem set not found"});
+    }
+
+    let problemFound = false;
+    const problemSets = result.problemSets;
+    for(const set of [problemSets?.problemSet1, problemSets?.problemSet2, problemSets?.problemSet3]){
+      const s = set?set:[];
+      for(const group of s){
+        const g = group?group:[];
+        //@ts-ignore
+        for(const problem of g){
+          if(problem.contestId === contestId && problem.index === index){
+            problem.doneStatus = doneStatus;
+            problemFound = true;
+          }
+        }
+      }
+    }
+
+    if(!problemFound){
+      return res.status(404).send({message:"Problem not found"});
+    }
+
+    await result.save();
+    return res.status(200).send({message:"Problem status updated", doneStatus});
+  }catch(err){
+    console.log("error updating problem status", err);
+    return res.status(500).send({message:"Could not update problem status"});
+  }
+ }
 
 export const workHandler = async (userId:string)=>{
    let stat;

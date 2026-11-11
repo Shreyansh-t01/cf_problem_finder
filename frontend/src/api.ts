@@ -27,3 +27,13 @@ export const getProblemSet = async(userId:string)=>{
 
  
 }
+
+export const updateProblemDoneStatus = async(userId:string, contestId:number, index:string, doneStatus:boolean)=>{
+   const response = await axios.patch(`${import.meta.env.VITE_API_URL}/problemset/changeState`,{
+      userId,
+      contestId,
+      index,
+      doneStatus
+   })
+   return response.data;
+}
