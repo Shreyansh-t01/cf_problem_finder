@@ -5,7 +5,7 @@ export const queryCache = async (userID:string)=>{
     const query = await cacheModel.find({
         userId:userID
     });
-    console.log("query answered - "+ query)
+    
 
     if(query.length===0){
         return {

@@ -210,7 +210,6 @@ export const workHandler = async (userId:string)=>{
 
   // segregating the entire submissions into accepted and attempted category
   const arr = stat?.data.result;
-  console.log("arr formed in between")
   let cfSubmissions = [];
   const excludedId  = new Set<string>();  // storing questions id which are already solved or excluded 
   for(const ele of arr){
@@ -321,7 +320,7 @@ export const workHandler = async (userId:string)=>{
      }
     
      const slots = Math.round(totalSlots*(e.tagValue/totalWeight));
-     console.log(slots)
+     
      allocated+=slots;
      return {tag:e.tag,slots:slots}
   })  
@@ -385,7 +384,7 @@ export const workHandler = async (userId:string)=>{
      return arr;
    })
   
-    console.log("first array ka first element ->"+problemSet1[0][0].problemName+" contest id ->"+problemSet1[0][0].contestId)
+    
 
   const reply = {
     message:"problem set generated",

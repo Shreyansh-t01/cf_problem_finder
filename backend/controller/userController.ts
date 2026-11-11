@@ -57,21 +57,37 @@ export const getUser = async (req:Request,res:Response)=>{
  let totalProblemSolved:number = 0;
  let wrongAnswers:number = 0;
  let i:number;
+ let accSubmissions = 0;
+ const mp = new Set<string>();
+ console.log(stat?.data.result.length)
+ console.log(stat?.data.result[0]);
  for(i=0;i<stat?.data.result.length;i++){
     if(stat?.data.result[i].verdict=='OK'){
-      totalProblemSolved++;
+         accSubmissions++;
+         console.log({
+          submissionContestId:stat?.data.result[i].problem.contestId,
+          name:stat?.data.result[i].problem.name
+         })
+         if(stat?.data.result[i].problem.contestId!=null && (!mp.has(`${stat?.data.result[i].problem.contestId}-${stat?.data.result[i].problem.index}`) && !mp.has(`${stat?.data.result[i].problem.name}`))){
+            totalProblemSolved++;
+            mp.add(`${stat?.data.result[i].problem.contestId}-${stat?.data.result[i].problem.index}`)
+         }
+         else if(!stat?.data.result[i].problem.contestId && !mp.has(`${stat?.data.result[i].problem.name}`)){
+          totalProblemSolved++;
+          mp.add(`${stat?.data.result[i].problem.name}`)
+         }
+        
     }
-    else{
-      wrongAnswers++;
-    }
+    if(stat?.data.result[i].verdict==='WRONG_ANSWER') wrongAnswers++;
  }
- let acceptanceRate = (totalProblemSolved/(wrongAnswers+totalProblemSolved))*100;
+
+ console.log("accepted questions "+accSubmissions)
+ let acceptanceRate = (accSubmissions/stat?.data.result.length)*100;
  
  userDetails.totalProblemSolved = totalProblemSolved;
  userDetails.wrongAnswers = wrongAnswers;
  userDetails.acceptanceRate = acceptanceRate;
-
-
+ console.log(userDetails)
 const user = await prisma.users.findUnique({
   where : {
     cfUsername:userDetails.username,
@@ -175,7 +191,6 @@ try{
     questionsArr1 = problemSet.problemSet1;
     questionsArr2 = problemSet.problemSet2;
     questionsArr3 = problemSet.problemSet3;
-   
    const query = await cacheModel.create({
    userId:userDetails.username,
    analysis:answer.analysisOfUser,
@@ -202,9 +217,7 @@ userDetails.aiResponse = answer;
     verdict:true  
   })
 }
-
 export const getTagCount=async(cfUsername:string):Promise<Map<string, number>>=>{
-
     let stat;
  try{
   stat = await axios.get(`https://codeforces.com/api/user.status?handle=${cfUsername}`)
