@@ -19,7 +19,7 @@ const Enter = () => {
   return (
     <div className=' flex flex-col gap-2 w-screen h-80  justify-center items-center'>
         <div className="textContainer lg:text-xl text-sm">
-           <h3>Enter Your Codeforces Username Here ..</h3>
+           <h3>Enter Your Codeforces Username Here </h3>
 
         </div>
         <input type="text" className=' bg-white p-1.5 border border-gray-700 rounded-sm' onChange={(e)=> setCfUsername(e.target.value)} value={cfUsername}/>
