@@ -121,14 +121,14 @@ return (
         <div className="mainData flex flex-col lg:gap-2 mb-15">
           <div className="mainContainer flex justify-between px-3">
                   <div className="mainName text-[#1E293B] flex flex-col">
-               <p className='lg:text-xl text-lg font-semibold  '>Username:-</p>
-               <p className='lg:text-3xl  text-lg font-semibold '>{userDetails.username}</p>
+               <p className='lg:text-xl text-md font-[helvetica]'>Username:-</p>
+               <p className='lg:text-3xl  text-md font-[helvetica] '>{userDetails.username}</p>
             </div>
             
           </div>
-            <div className="dataContainer text-[#1E293B] lg:text-xl font-semibold ">
+            <div className="dataContainer text-[#1E293B] lg:text-xl">
                 <div className="mainBox grid lg:grid-cols-2 gap-3">
-                    <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-2xl ">   
+                    <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-xl ">   
                         <div className="headerText flex gap-3 "> 
                             <h4 className=''>Rating -</h4>
                             <h4>{userDetails.rating}</h4>
@@ -137,22 +137,22 @@ return (
                             <h1 className='lg:text-4xl text-2xl font-semibold'>{userDetails.rank}</h1>
                          </div>
                     </div>
-                     <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-2xl border-gray-500 ">
+                     <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-xl border-gray-500 ">
                         <h3>Total Problem Solved</h3>
-                        <h1 className='lg:text-4xl text-2xl font-bold '>{userDetails.totalProblemSolved}</h1>
+                        <h1 className='lg:text-4xl text-2xl font-semibold '>{userDetails.totalProblemSolved}</h1>
                     </div>
-                     <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-2xl border-gray-500">
+                     <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-xl border-gray-500">
                        <h3 className=''>Acceptance Rate</h3>
                        <h1 className='lg:text-4xl text-2xl font-bold text-green-700'>{Math.round(userDetails.acceptanceRate)}%</h1>
                     </div>
-                     <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-2xl border-gray-500">
+                     <div className="ratingBox bg-white flex flex-col justify-center items-center  rounded-xl border-gray-500">
                         <h3 className=''>Wrong Answer</h3>
-                        <h1 className='font-boldlg:text-4xl text-2xl text-red-600'>{userDetails.wrongAnswers}</h1>
+                        <h1 className='font-semibold lg:text-4xl text-2xl text-red-600'>{userDetails.wrongAnswers}</h1>
                     </div>
                 </div>
             </div>
            
-            <div className="ratingwiseSolved flex lg:flex-row flex-col lg:gap-8 w-full self-center ">
+            <div className="ratingwiseSolved flex lg:flex-row flex-col lg:gap-8 w-full self-center gap-3 my-3 md:my-1">
                 {/* <h3 className='font-bold text-xl text-black'>Rating Wise Solved Problems List:-</h3>
                 <table className=' gap-2 w-full text-black'>
                     <thead className='bg-zinc-200 text-black px-3 py-4'>
@@ -181,7 +181,7 @@ return (
             <div className="aiResponse flex flex-col gap-5">
                 <div className="analysis ">
                    
-                   <div className="pointsContainer bg-white rounded-2xl lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
+                   <div className="pointsContainer bg-white rounded-xl lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
                     <h3 className='font-bold text-xl text-black border-b border-b-black'>Analysis:-</h3>
                      <div className="pointsContainer">
                         {userDetails.aiResponse? userDetails.aiResponse.analysisOfUser.map((e,idx)=>(
@@ -195,7 +195,7 @@ return (
                 </div>
                 <div className="mistakes">
                     
-                    <div className="pointsContainer bg-white rounded-2xl lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
+                    <div className="pointsContainer bg-white rounded-xl lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 ">
                         <h3 className='font-bold text-xl text-black border-b border-b-black'>Mistakes:-</h3>
                           <div className="pointsContainer">
                             {userDetails.aiResponse? userDetails.aiResponse.mistakesUserMade.map((e,idx)=>(
@@ -209,7 +209,7 @@ return (
                 </div>
                 <div className="tipsToImprove">
                     
-                    <div className="pointsContainer bg-white rounded-2xl lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 text-black">
+                    <div className="pointsContainer bg-white rounded-xl lg:px-5 lg:py-3 px-3 py-1 flex flex-col lg:gap-5 gap-2 text-black">
                          <h3 className='font-bold text-xl text-black border-b border-b-black' >Tips To Improve:-</h3>
                       <div className="pointsContainer flex flex-col">
                          {userDetails.aiResponse? userDetails.aiResponse.adviceUser.map((e,idx)=>(

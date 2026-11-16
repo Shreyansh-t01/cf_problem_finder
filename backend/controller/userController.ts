@@ -116,8 +116,8 @@ if(user){
 
 const mpTaggedQuestions = await getTagCount(cfUsername);
 const mpRatingQuestions = await getRatingCount(cfUsername);
-const taggedQuestionobj = Object.fromEntries(mpTaggedQuestions)
-const ratingQuestionObj = Object.fromEntries(mpRatingQuestions)
+const taggedQuestionobj = Object.fromEntries(mpTaggedQuestions);
+const ratingQuestionObj = Object.fromEntries(mpRatingQuestions);
 let arrayRating:[number,number][] = [];
 let arrayTagged:[string,number][]= [];
 mpTaggedQuestions.forEach((value,key)=>{
@@ -143,7 +143,7 @@ the response should be in the format given to you
  mistakesUserMade:["first line","second line"...],
  adviceUser:["first line","second line"..]
 }
-dont add on heading in data present inside any of the three fields . Make sure you don't give general advices or general stuff only give relevant short important stuff to the user as response . make sure before saying anything you say should be proven by the data and submission history of the user you can give reference of what you analyzed and came to conclusion. suggestions should not be generic one they should very user specific.
+important--"dont add on heading in data present inside any of the three fields" . Make sure you don't give general advices or general stuff only give relevant short important stuff to the user as response . make sure before saying anything you say should be proven by the data and submission history of the user you can give reference of what you analyzed and came to conclusion. suggestions should not be generic one they should very user specific.
 `
 const analysisSchema = z.string().describe(`analysis and insights related to user profile`);
 const mistakesSchema = z.string().describe(`mistake made by user in doing competitve programming`);

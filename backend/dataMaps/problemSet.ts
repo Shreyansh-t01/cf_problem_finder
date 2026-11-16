@@ -8,7 +8,7 @@ let problemInfo;
   const problem = problemInfo?.data.result.problems; 
  const rawStats = problemInfo?.data.result.problemStatistics;
 //@ts-ignore
- export const problemSet = problem.map((problem,index)=>{
+ export const problemSet = problem.map((problem,index:number)=>{
     return {
         ...problem,
         solvedCount:rawStats[index].solvedCount

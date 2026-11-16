@@ -195,72 +195,85 @@ doc.text("Train Your Brain..", 14, 28);
     <div className='flex flex-col mt-5 items-center bg-[#F1F5F9]'>    
         <div className="buttonsAndHeads flex justify-between items-center lg:w-[80%] w-full">
           <div className="buttonfield">
-            <button className='bg-black text-white px-2 py-1 m-2 rounded-md ' onClick={navigationHandler}>Get Back</button>
+            <button className='bg-black text-white md:px-2 md:py-1 md:m-2 rounded-md mx-1' onClick={navigationHandler}><svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M19 12H5"></path>
+  <path d="M12 19l-7-7 7-7"></path>
+</svg></button>
           </div>
-          <h2 className='text-3xl font-semibold'>Personalized Problem Set</h2>
+          <h2 className='lg:text-3xl sm:text-xl font-semibold '>Personalized Problem Set</h2>
           <div className="buttonfield">
-            <button className='bg-amber-600 text-white px-2 py-1 m-2 rounded-md ' onClick={generatePDF}>GetPDF</button>
+            <button className='bg-amber-600 text-white px-2 py-1 lg:m-2 m-1 rounded-md ' onClick={generatePDF}>GetPDF</button>
           </div>
         </div>
-         
-      
-         
-        
-      
-        
-
       <div className="questionsContainer flex flex-col lg:gap-8 gap-4 border-2 border-black w-full h-full justify-center items-center">
-            <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-8 lg:py-4 px-3 py-3">
-                <h3 className='lg:text-4xl text-2xl font-bold'>Train Your Brain..</h3>
+            <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-6 lg:py-6 px-3 py-3 shadow ">
+                <h3 className='text-xl lg:text-2xl font-bold mb-2'>Train Your Brain</h3>
                  {problemSet1?.map((e:problem,idx)=>{
                      return (
-                        <div className='flex text-black bg-white lg:px-3 lg:py-2 lg:gap-8 px-2 py-1 gap-4 text-sm sm:text-lg font-semibold'>
-                         <div className="counter">{idx+1}.</div>
+                        <div className='flex  border-b text-black  lg:px-7 lg:py-2 lg:gap-8 px-2 py-1 justify-between items-center  sm:text-md lg:text-lg
+                         '>
+                         <div className="ps flex gap-4 ">
+                          <div className="counter font-semibold">{idx+1}.</div>
                          <div className="problemLink">
                          <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
                          </div>
-
-                         <div className="toggle">
-                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} />
+                         </div>
+                         <div className="toggle 
+                            accent-[#ddd] 
+                         ">
+                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} className='md:w-4 md:h-4' />
                          </div>
                         </div>
                      )
                  })}
             </div>
-            <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-8 lg:py-4 px-3 py-3">
-                <h3 className='lg:text-4xl text-2xl font-bold'>Muscle Up...</h3>
+            <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-6 lg:py-6 px-3 py-3 shadow ">
+                <h3 className='lg:text-2xl text-xl font-bold mb-2'>Muscle up..</h3>
                  {problemSet2?.map((e:problem,idx)=>{
                      return (
-                        <div className='flex text-black bg-white lg:px-3 lg:py-2 lg:gap-8 px-2 py-1 gap-4 text-sm sm:text-lg font-semibold'>
-                         <div className="counter">{idx+1}</div>
+                        <div className='flex  border-b text-black  lg:px-7 lg:py-2 lg:gap-8 px-2 py-1 justify-between items-center  sm:text-md lg:text-lg
+                         '>
+                         <div className="ps flex gap-4 ">
+                          <div className="counter font-semibold">{idx+1}.</div>
                          <div className="problemLink">
                          <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
                          </div>
-                         <div className="toggle">
-                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} />
+                         </div>
+                         <div className="toggle 
+                            accent-[#ddd] 
+                         ">
+                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} className='md:w-4 md:h-4' />
                          </div>
                         </div>
                      )
                  })}
             </div>
-            <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-8 lg:py-4 px-3 py-3">
-                <h3 className='lg:text-4xl text-2xl font-bold'>Explore...</h3>
+            <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-6 lg:py-6 px-3 py-3 shadow ">
+                <h3 className='lg:text-2xl text-xl font-bold'>Explore..</h3>
+                <h6 className='text-zinc-500 text-sm mb-2'>(This category can contain some higher rated problems as this is designed to introduce you to some new type of problems that you have not practiced till now)</h6>
                  {problemSet3?.map((e:problem,idx)=>{
                      return (
-                        <div className='flex text-black bg-white lg:px-3 lg:py-2 lg:gap-8 px-2 py-1 gap-4 text-sm sm:text-lg font-semibold'>
-                         <div className="counter">{idx+1}</div>
+                        <div className='flex  border-b text-black  lg:px-7 lg:py-2 lg:gap-8 px-2 py-1 justify-between items-center  sm:text-md lg:text-lg
+                         '>
+                         <div className="ps flex gap-4 ">
+                          <div className="counter font-semibold">{idx+1}.</div>
                          <div className="problemLink">
                          <a href={"https://codeforces.com/problemset/problem/"+`${e.contestId}/${e.index}`} >{e.problemName}</a>
                          </div>
-                         <div className="toggle">
-                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} />
+                         </div>
+                         <div className="toggle 
+                            accent-[#ddd] 
+                         ">
+                          <input type="checkbox" checked={!!e.doneStatus} onChange={(event)=>handleDoneStatusChange(e,event.target.checked)} className='md:w-4 md:h-4' />
                          </div>
                         </div>
                      )
                  })}
             </div>
+          
+            
       </div>
-      <div className='text-xl font-semibold text-gray-800 py-10 lg:px-10 px-2 w-full text-center font-mono'>
+      <div className='lg:text-md text-sm text-gray-800 py-10 lg:px-10 px-2 w-full text-center font-mono'>
       Disclaimer:- This problem set is generated on the basis of your Rating, previsouly Practiced question's rating and tags and what expert advices at you rating range to help you reach your next rating tier .. Thank you
     </div>
     </div>
