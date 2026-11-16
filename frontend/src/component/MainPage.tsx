@@ -28,7 +28,7 @@ interface userDetailsTypes {
 }
 const MainPage = () => {
     const navigate = useNavigate();
-  const {cfUsername,setCfUsername} = useUsername()
+  const {cfUsername} = useUsername()
   const [userDetails, setUserDetails] = useState<userDetailsTypes>({
     username:"shreyansh",
     maxRating:1900,
