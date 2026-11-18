@@ -13,6 +13,7 @@ const Enter = () => {
          alert("please enter codeforces username first")
          return;
         }
+        localStorage.setItem('username',cfUsername);
         setLoading(true);
         navigate('/main')
    }

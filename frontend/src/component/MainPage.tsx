@@ -51,7 +51,7 @@ const MainPage = () => {
   })
   const{setLoading,loading} = useLoading()
   async function handleData(){
-
+    
      let apiResponse;
      try{
       apiResponse = await getUserData(cfUsername);
@@ -74,13 +74,13 @@ const MainPage = () => {
      }
      setUserDetails(mainobj)
      
-     
   }
 
   
    
    useEffect(()=>{
     async function dataHandling(){
+        // will be called with component mounting 
        setLoading(true);
        await handleData();
        setLoading(false);

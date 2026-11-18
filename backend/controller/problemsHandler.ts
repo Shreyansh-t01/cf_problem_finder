@@ -73,12 +73,13 @@ function problemFilter(
   userRating:number,
 ){
   
+  // problem is this valid problem set is containing the problems of higher rating which it should not
   const validProblems = problemSet.filter((problem:problemType)=>{
     const problemIdentity = `${problem.contestId}-${problem.index}`
     if(excludedId.has(problemIdentity)){
       return false;
     }
-    if(!problem.rating || minRating>problem.rating || maxRating>problem.rating) {
+    if(!problem.rating || minRating>problem.rating || maxRating<problem.rating) {
       return false;
     }
     if(!problem.tags.includes(targetTag)){
@@ -87,6 +88,7 @@ function problemFilter(
 
    return true;
   })
+
 
   const problemsWithScore = validProblems.map((problem:problemType)=>{ 
     let score = 0;
@@ -136,7 +138,7 @@ export const problemSetHandler = async (req:Request ,res:Response)=>{
   try{
    
      const result = await cacheModel.findOne({userId:userId});
-     if(!result){ throw new Error("DB query failed")}
+     if(!result){ throw new Error("DB query failed");}
 
      response ={
       message:"problem set generated",
@@ -211,7 +213,7 @@ export const workHandler = async (userId:string)=>{
   // segregating the entire submissions into accepted and attempted category
   const arr = stat?.data.result;
   let cfSubmissions = [];
-  const excludedId  = new Set<string>();  // storing questions id which are already solved or excluded 
+  const excludedId  = new Set<string>();  // storing questions id which are already solved 
   for(const ele of arr){
     const obj = {
       verdict:ele.verdict,
@@ -240,6 +242,7 @@ export const workHandler = async (userId:string)=>{
   
   // getting user rating 
   let Ru = userInfo?.data.result[0].rating
+  console.log("Rating of the user",Ru);
 
   // now calculating expectation values using gaussian central theorem
   // e = exp(1/2*(Ru - Rt)/sigma)  for each tag we will have to calculate this thing  
@@ -251,10 +254,11 @@ export const workHandler = async (userId:string)=>{
      const Rt = obj.rating;
      const delta = Ru-Rt;  // delta can be negative also 
      let sigma = 100;
-     if(Ru>=Rt) sigma = 450;
+     if(Ru>=Rt) sigma = 350;
      const val = (delta/sigma);
      
      const expectation = Math.exp(-(1/2)*(val*val));
+     console.log("expectation",expectation)
       // expectation score 
        
      const tag = obj.tag;  //problem tag 
@@ -287,7 +291,9 @@ export const workHandler = async (userId:string)=>{
      })
      }
     
-    const globalImportance = globalScore(Ru,tag) // get it from the global tag mapping point table  
+    const globalImportance = globalScore(Ru,tag)
+    console.log(`global importance of ${tag}`,globalImportance)
+    // get it from the global tag mapping point table  
     // calculating wt score for each tag and storing in proficiency map 
      const tagValue = (expectation*(globalImportance))/(0.1 + proficiencyScore); // don't you think zero practiced tag are examined here only 
     valueMap.push({
@@ -297,6 +303,7 @@ export const workHandler = async (userId:string)=>{
   }
     const rem = Ru%100;
     Ru = Ru-rem;
+    if(rem>=50) Ru = Ru+100-rem;
    const topRange = [Ru,Ru+100];
    const midRange = [Ru+100,Ru+200];
    const lastRange = [Ru-100,Ru];
@@ -306,6 +313,7 @@ export const workHandler = async (userId:string)=>{
   valueMap.sort((a,b)=> b.tagValue-a.tagValue)
    // this allocation array now holds top 4 tags and their slots out of 18
   const topTags = valueMap.slice(0,4);
+  console.log("top tags",topTags)
   const totalSlots = 18;  // this is slot one for higher rating problems to strengthen user rating 
    // adding up the tags value 
    let totalWeight = 0;
@@ -324,10 +332,10 @@ export const workHandler = async (userId:string)=>{
      allocated+=slots;
      return {tag:e.tag,slots:slots}
   })  
+  console.log("weak allocation ",weakAllocations)
 
 
    const problemSet1 = weakAllocations.map((e)=>{
-    console.log(e);
     const targetTag = e.tag;
     const minRating  = topRange[0];
     const maxRating = topRange[1];
@@ -339,6 +347,7 @@ export const workHandler = async (userId:string)=>{
 
   // allocating secondslot 
   const midTags = valueMap.slice(4,7);
+  console.log("mid tags ",midTags)
   const slotsTotal = 9;
   const totalWeight2 = midTags.reduce((sum,item)=> sum+item.tagValue,0);
   let allocatedSlots = 0;
@@ -349,11 +358,13 @@ export const workHandler = async (userId:string)=>{
       return {tag:e.tag , slots:slotsTotal-allocatedSlots}
     }
 
+
     const slots = Math.round(slotsTotal*(e.tagValue/totalWeight2)) 
     allocatedSlots+=slots;
 
     return {tag:e.tag,slots: slots}
   })
+  console.log("midAllocations ",midAllocations)
   const problemSet2 = midAllocations.map((e)=>{
      const targetTag = e.tag;
     const minRating  = midRange[0];

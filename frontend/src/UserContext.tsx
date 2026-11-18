@@ -9,7 +9,7 @@ export const usernameContext = createContext<usernameContexttype|null>(null);
 export function UsernameProvider({children}:{
     children:ReactNode
 }){
-    const [cfUsername, setCfUsername] = useState("")
+    const [cfUsername, setCfUsername] = useState(()=>localStorage.getItem('username')||"")
 
    return (
       <usernameContext.Provider value={{cfUsername,setCfUsername}}>
