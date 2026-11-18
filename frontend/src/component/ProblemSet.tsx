@@ -250,7 +250,7 @@ doc.text("Train Your Brain..", 14, 28);
             </div>
             <div className="setContainer  sm:w-[80%] w-full  rounded-sm lg:px-6 lg:py-6 px-3 py-3 shadow ">
                 <h3 className='lg:text-2xl text-xl font-bold'>Explore..</h3>
-                <h6 className='text-zinc-500 text-sm mb-2'>(This category can contain some higher rated problems as this is designed to introduce you to some new type of problems that you have not practiced till now)</h6>
+                <h6 className='text-zinc-500 text-sm mb-2'>(This category can contain some higher rated problems as this is designed to introduce you to some new type of problems that you have not practiced till now or this can be also be blank for you if your are rated very low.)</h6>
                  {problemSet3?.map((e:problem,idx)=>{
                      return (
                         <div className='flex  border-b text-black  lg:px-7 lg:py-2 lg:gap-8 px-2 py-1 justify-between items-center  sm:text-md lg:text-lg
