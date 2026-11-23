@@ -93,18 +93,17 @@ function problemFilter(
   const problemsWithScore = validProblems.map((problem:problemType)=>{ 
     let score = 0;
     if(!problem.rating) return false;
-    const ratingDiff = Math.abs(problem.rating-userRating) ; 
+    const R = (maxRating+minRating)/2;
+    const ratingDiff = Math.abs(problem.rating-R) ; 
      score += Math.max(0,1000-(ratingDiff*5));
-     score+=problem.solvedCount/100;
+     score += Math.log10(Math.max(1, problem.solvedCount)) * 30;
      // we weak tags combine in a perticular problem that is wow moment for us 
      for(const tg of problem.tags){
       if(tg!==targetTag && userWeakTags.has(tg)){
         score+=2000;
       }
      }
-     const identity =  `${problem.contestId}-${problem.index}`
-
-     excludedId.add(identity)
+     
      const obj = {
       problemScore:score,
       problemRating:problem.rating,
@@ -120,6 +119,9 @@ function problemFilter(
   problemsWithScore.sort((a:problemScoreObj,b:problemScoreObj)=> b.problemScore-a.problemScore)
   
   const reqProblems = problemsWithScore.slice(0,slotsNeeded)
+  for (const problem of reqProblems) {
+    excludedId.add(`${problem.contestId}-${problem.index}`);
+  }
   
   return reqProblems;
 
@@ -230,7 +232,7 @@ export const workHandler = async (userId:string)=>{
       cfSubmissions.push(obj);
   } 
   // this is holding the questions solved successfully by the user 
-  const accSubmissions = cfSubmissions.filter((e)=> e.verdict=='OK' && e.problem.rating!=="")
+  const accSubmissions = cfSubmissions.filter((e)=> e.verdict==='OK' && e.problem.rating!=="")
   // getting user information
   let userInfo;
   try{

@@ -47,7 +47,8 @@ else{
       const y2 = upper;
       const x2 = 1800;
 
-      // now we also know x we need to find y and return it 
+      // now we also know x we need to find y and return it
+      if(y1===y2) return y1;
       const x = userRating;
       const y = y1+((x-x1)*((x2-x1)/(y2-y1)));
 
